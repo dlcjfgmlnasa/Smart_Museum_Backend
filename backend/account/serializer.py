@@ -7,7 +7,7 @@ class AccountCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id',
+            'pk',
             'password',
             'username',
             'museum_name',
@@ -24,14 +24,14 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id',
+            'pk',
             'username',
             'museum_name',
             'museum_location',
             'payment_state',
             'service_plan',
         )
-        write_only_fields = ('id', 'username')
+        write_only_fields = ('pk', 'username')
 
 
 
