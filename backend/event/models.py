@@ -1,12 +1,20 @@
 # -*- coding:utf-8 -*-
 from django.db import models
 from backend.model import TimeStampedModel
+from museum.models import InnerExhibition
 
 
 class Event(TimeStampedModel):
     EVENT_CHOICE = (
         (1, 'Normal'),
         (2, 'Mission')
+    )
+    # 내부 전시관 아이디
+    inner_exhibition = models.ForeignKey(
+        InnerExhibition, null=True,
+        on_delete=models.SET_NULL,
+        related_name='event',
+        db_column='INNER_EXHIBITION_ID'
     )
     # 이벤트 시작 날짜 및 시간
     start_dt = models.DateTimeField(
