@@ -2,11 +2,14 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from .serializer import AccountCreateSerializer, AccountSerializer
 from .models import User
 
 
 class AccountView(APIView):
+    permission_classes = [AllowAny]
+
     # 회원 가입
     def post(self, request):
         serializer_cls = AccountCreateSerializer(data=request.data)
