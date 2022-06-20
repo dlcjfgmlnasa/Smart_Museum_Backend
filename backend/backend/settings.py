@@ -139,6 +139,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
 }
 
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000',
+                         'http://localhost:3000']
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
