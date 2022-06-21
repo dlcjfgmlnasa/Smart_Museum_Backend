@@ -15,6 +15,7 @@ class AccountView(APIView):
         serializer_cls = AccountCreateSerializer(data=request.data)
         if serializer_cls.is_valid():
             serializer_cls.save()
+
             return Response(
                 serializer_cls.data,
                 status=status.HTTP_200_OK
