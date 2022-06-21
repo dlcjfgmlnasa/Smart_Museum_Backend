@@ -52,7 +52,7 @@ class ExhibitionDetailAPIView(APIView):
     def get_exhibition(pk: int):
         try:
             return Exhibition.objects.get(id=pk)
-        except User.DoesNotExist:
+        except Exhibition.DoesNotExist:
             return None
 
     def get(self, request, pk: int):
