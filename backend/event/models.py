@@ -16,14 +16,20 @@ class Event(TimeStampedModel):
         related_name='event',
         db_column='INNER_EXHIBITION_ID'
     )
+    # 이벤트 이름
+    name = models.CharField(
+        max_length=100,
+        blank=False, null=False,
+        db_column='EVENT_NAME'
+    )
     # 이벤트 시작 날짜 및 시간
     start_dt = models.DateTimeField(
-        blank=True, null=True,
+        blank=False, null=False,
         db_column='START_DATETIME'
     )
     # 이벤트 끝 날짜 및 시간
     end_dt = models.DateTimeField(
-        blank=True, null=True,
+        blank=False, null=False,
         db_column='END_DATETIME'
     )
     # 이벤트 타입
