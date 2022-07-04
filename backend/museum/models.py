@@ -44,7 +44,8 @@ class Exhibition(TimeStampedModel):
 
     class Meta:
         db_table = 'SM_EXHIBITION'
-        ordering = ['pk']
+        unique_together = ['id', 'user']
+        ordering = ['id']
 
 
 class InnerExhibition(TimeStampedModel):
@@ -68,7 +69,7 @@ class InnerExhibition(TimeStampedModel):
     )
     # 번호 순서
     order = models.IntegerField(
-        primary_key=True,
+        null=False, blank=False,
         db_column='ORDER'
     )
     # 전시관 설명
