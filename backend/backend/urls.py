@@ -23,7 +23,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     # REACT APP
-    re_path('.*', TemplateView.as_view(template_name='index.html')),
+    # re_path('.*', TemplateView.as_view(template_name='index.html')),
 
     # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
