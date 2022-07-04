@@ -16,7 +16,7 @@ class ReactAppView(View):
         print(request)
         print(os.path.abspath('.'))
         try:
-            with open('D:\\Project\\Smart_Museum_Backend\\build\\index.html', encoding='utf-8') as file:
+            with open(os.path.join(str(settings.ROOT_DIR), 'frontend', 'build', 'index.html'), encoding='utf-8') as file:
                 file = file.read()
                 return HttpResponse(file)
         except FileNotFoundError:
