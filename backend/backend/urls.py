@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from django.conf.urls.static import static
+from django.conf import settings
 from .views import MyTokenObtainPairView
 
 urlpatterns = [
@@ -26,5 +28,5 @@ urlpatterns = [
     path('api/v1/account/', include('account.urls')),
     path('api/v1/musuem/', include('museum.urls')),
     path('api/v1/event/', include('event.urls'))
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-]
