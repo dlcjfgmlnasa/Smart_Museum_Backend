@@ -17,7 +17,7 @@ import environ
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-ROOT_DIR = environ.Path(__file__) - 4
+ROOT_DIR = environ.Path(__file__) - 5
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
