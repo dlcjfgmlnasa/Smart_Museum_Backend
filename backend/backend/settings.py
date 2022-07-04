@@ -167,7 +167,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-    str(ROOT_DIR.path('Smart_Museum_Frontend', 'build', 'static'))
+    os.path.join(str(ROOT_DIR), 'Smart_Museum_Frontend', 'build', 'static')
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, '_files', 'static')
