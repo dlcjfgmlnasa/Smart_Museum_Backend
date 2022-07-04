@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 import datetime
 from pathlib import Path
+import environ
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+ROOT_DIR = environ.Path(__file__) - 3
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -164,9 +166,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'config', 'static')
-# ]
+STATICFILES_DIRS = [
+    str(ROOT_DIR.path('Smart_Museum_Frontend', 'build', 'static'))
+]
 
 STATIC_ROOT = os.path.join(BASE_DIR, '_files', 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, '_files', 'media')

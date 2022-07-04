@@ -17,16 +17,22 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import MyTokenObtainPairView
+from .views import MyTokenObtainPairView, ReactAppView
 
 urlpatterns = [
-    # JWT Token
+    # REACT APP
+    path('', ReactAppView.as_view()),
+
+    # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
+    # REST API
     path('api/v1/account/', include('account.urls')),
     path('api/v1/musuem/', include('museum.urls')),
     path('api/v1/event/', include('event.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+urlpatterns += \
+    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
