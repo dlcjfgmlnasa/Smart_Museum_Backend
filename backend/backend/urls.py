@@ -13,15 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import MyTokenObtainPairView, ReactAppView
+from .views import MyTokenObtainPairView
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
     # REACT APP
-    path('', ReactAppView.as_view()),
+    re_path('.*', TemplateView.as_view(template_name='index.html')),
 
     # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -33,6 +35,8 @@ urlpatterns = [
     path('api/v1/musuem/', include('museum.urls')),
     path('api/v1/event/', include('event.urls'))
 ]
-urlpatterns += \
-    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [
+    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+]
 
