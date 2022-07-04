@@ -23,9 +23,6 @@ from backend.views import ReactAppView
 
 
 urlpatterns = [
-    # REACT APP
-    re_path('', TemplateView.as_view(template_name='index.html')),
-
     # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -34,7 +31,10 @@ urlpatterns = [
     # REST API
     path('api/v1/account/', include('account.urls')),
     path('api/v1/musuem/', include('museum.urls')),
-    path('api/v1/event/', include('event.urls'))
+    path('api/v1/event/', include('event.urls')),
+
+    # REACT APP
+    re_path(r'.*', TemplateView.as_view(template_name='index.html')),
 ]
 urlpatterns += [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
