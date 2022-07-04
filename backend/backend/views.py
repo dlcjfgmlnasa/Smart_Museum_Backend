@@ -17,7 +17,7 @@ class ReactAppView(View):
         print(os.path.abspath('.'))
         print(os.path.join(str(settings.ROOT_DIR), 'Smart_Museum_Frontend', 'build', 'static'))
         try:
-            with open(os.path.join(str(settings.ROOT_DIR), 'Smart_Museum_Frontend', 'build', 'index.html'),
+            with open(os.path.join(str(settings.ROOT_DIR), 'frontend', 'build', 'index.html'),
                       encoding='utf-8') as file:
                 file = file.read()
                 return HttpResponse(file)

@@ -24,7 +24,7 @@ from backend.views import ReactAppView
 
 urlpatterns = [
     # REACT APP
-    path('', ReactAppView.as_view()),
+    re_path('', TemplateView.as_view(template_name='index.html')),
 
     # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
