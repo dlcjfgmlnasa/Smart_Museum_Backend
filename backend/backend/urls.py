@@ -22,7 +22,28 @@ from django.views.generic import TemplateView
 from backend.views import ReactAppView
 
 
+index = TemplateView.as_view(template_name='index.html')
+
 urlpatterns = [
+    # REACT APP
+    path('', index),
+    path('login', index),
+    path('join', index),
+    path('mypage', index),
+
+    path('dashboard', index),
+    path('exhibition', index),
+    path('exhibition-add', index),
+    path('inner-exhibition', index),
+    path('inner-exhibition-detail', index),
+
+    path('service', index),
+    path('service-select', index),
+    path('system', index),
+    path('system-user', index),
+]
+
+urlpatterns += [
     # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -37,9 +58,3 @@ urlpatterns += [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
-
-urlpatterns += [
-    # REACT APP
-    re_path(r'.*', TemplateView.as_view(template_name='index.html')),
-]
-
