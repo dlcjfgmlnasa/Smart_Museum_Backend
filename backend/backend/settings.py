@@ -170,6 +170,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/asset/'
+MEDIA_URL_1 = '/img/'
 
 STATICFILES_DIRS = [
     os.path.join(str(ROOT_DIR), 'Smart_Museum_Frontend', 'build', 'static')
@@ -177,6 +178,8 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, '_files', 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, '_files', 'asset')
+MEDIA_ROOT_1 = os.path.join(str(ROOT_DIR), 'Smart_Museum_Frontend', 'public', 'img')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
