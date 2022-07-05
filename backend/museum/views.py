@@ -191,3 +191,18 @@ class InnerExhibitionDetailAPIView(APIView):
         return Response(
             status=status.HTTP_204_NO_CONTENT
         )
+
+
+class InnerExhibitionByUser(APIView):
+    def get(self, request, user_pk):
+        inner_exhibition = InnerExhibition.objects.filter(exhibition__user_id=user_pk)
+        if inner_exhibition is None:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer_cls = InnerExhibitionSerializer(inner_exhibition, many=True)
+
+        return Response(
+            serializer_cls.data,
+            status=status.HTTP_200_OK
+        )
