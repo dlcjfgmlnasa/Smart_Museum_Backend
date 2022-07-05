@@ -9,8 +9,7 @@ urlpatterns = [
          name='exhibition - creat/read (based user_pk)'),
     path('exhibition/<int:pk>/',
          ExhibitionDetailAPIView.as_view(),
-         name='exhibition - read/edit/delete (based pk)'
-    ),
+         name='exhibition - read/edit/delete (based pk)'),
     path('exhibition/<int:exhibition_pk>/inner_exhibition/',
          InnerExhibitionAPIView.as_view(),
          name='inner exhibition - create (based exhibition_pk)'),
