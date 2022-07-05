@@ -1,7 +1,11 @@
 # -*- coding:utf-8 -*-
 from django.db import models
 from backend.model import TimeStampedModel
-from museum.models import InnerExhibition
+from museum.models import InnerExhibition, Exhibition
+from django.contrib.auth import get_user_model
+
+
+USER_MODEL = get_user_model()
 
 
 class Event(TimeStampedModel):
@@ -9,10 +13,16 @@ class Event(TimeStampedModel):
         (1, 'Normal'),
         (2, 'Mission')
     )
-    # 내부 전시관 아이디
-    inner_exhibition = models.ForeignKey(
-        InnerExhibition, null=True,
+    # 전시관 아이디 - 이벤트 타입이 'Normal' 일 때
+    user = models.ForeignKey(
+        USER_MODEL, null=True,
         on_delete=models.SET_NULL,
+        related_name='event',
+        db_column='USER_ID'
+    )
+    # 내부 전시관 아이디 - 이벤트 타입이 'Mission' 일 때
+    inner_exhibition = models.ManyToManyField(
+        InnerExhibition,
         related_name='event',
         db_column='INNER_EXHIBITION_ID'
     )

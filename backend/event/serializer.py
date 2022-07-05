@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from .models import Event
-from museum.serializer import InnerExhibitionSerializer
+from account.serializer import AccountSerializer
+from museum.serializer import ExhibitionSerializer
 from rest_framework.serializers import ModelSerializer
 
 
@@ -9,7 +10,6 @@ class EventSimpleSerializer(ModelSerializer):
         model = Event
         fields = (
             'pk',
-            'inner_exhibition',
             'name',
             'start_dt',
             'end_dt',
@@ -19,14 +19,31 @@ class EventSimpleSerializer(ModelSerializer):
         )
 
 
-class EventSerializer(ModelSerializer):
-    inner_exhibition = InnerExhibitionSerializer(read_only=True)
+class EventNormalSerializer(ModelSerializer):
+    user = AccountSerializer(read_only=True)
 
     class Meta:
         model = Event
         fields = (
             'pk',
-            'inner_exhibition',
+            'user',
+            'name',
+            'start_dt',
+            'end_dt',
+            'type',
+            'explanation',
+            'image'
+        )
+
+
+class EventMissionSerializer(ModelSerializer):
+    user = AccountSerializer(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = (
+            'pk',
+            'user',
             'name',
             'start_dt',
             'end_dt',

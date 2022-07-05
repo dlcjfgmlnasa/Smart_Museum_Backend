@@ -4,10 +4,13 @@ from . import views
 
 
 urlpatterns = [
-    path('inner_exhibition/<int:inner_exhibition_pk>/',
+    path('',
          views.EventAPIView.as_view(),
-         name='event create/read list'),
+         name='normal event list/create'),
     path('<int:pk>/',
          views.EventDetailAPIView.as_view(),
          name='event read/update/delete'),
+    path('mission/<int:inner_exhibition_pk>/',
+         views.EventMissionAPIView.as_view(),
+         name='event inner_exhibition create/read list'),
 ]
