@@ -34,10 +34,13 @@ urlpatterns = [
     path('dashboard', index),
     path('exhibition', index),
     path('exhibition-add', index),
+    path('exhibition-modify', index),
     path('inner-exhibition', index),
     path('inner-exhibition-detail', index),
     path('inner-exhibition-add', index),
     path('inner-exhibition-modify', index),
+    path('event'),
+    path('event-mission-detail'),
 
     path('service', index),
     path('service-select', index),
