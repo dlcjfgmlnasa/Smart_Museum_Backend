@@ -4,7 +4,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .serializer import AccountCreateSerializer, AccountSerializer
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import ListAPIView
 from .models import User
+from django.db.models import Q
+
+
+class AccountSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class AccountView(APIView):
@@ -71,12 +80,36 @@ class AccountDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AccountListView(APIView):
-    def get(self, request):
-        users = User.objects.filter(is_superuser=False)
-        if users.count() != 0:
-            serializer_cls = AccountSerializer(users, many=True)
-            return Response(serializer_cls.data)
-        return Response(
-            {}, status=status.HTTP_200_OK
-        )
+class AccountListView(ListAPIView):
+    pagination_class = AccountSetPagination
+    serializer_class = AccountSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.filter()
+        # User.objects.filter(username__in=)
+        queryset = self.filter_queryset(queryset)
+        return queryset
+
+    def filter_queryset(self, queryset):
+        username = self.request.GET.get('username')
+        museum_name = self.request.GET.get('museum_name')
+        museum_location = self.request.GET.get('museum_location')
+        payment_state = self.request.GET.get('payment_state')
+        service_plan = self.request.GET.get('service_plan')
+
+        query = (username or museum_name or museum_location or payment_state or service_plan)
+        if query:
+            query_object = Q()
+            if username:
+                query_object.add(Q(username=username), Q.OR)
+            if museum_name:
+                query_object.add(Q(museum_name=museum_name), Q.OR)
+            if museum_location:
+                query_object.add(Q(museum_location=museum_location), Q.OR)
+            if payment_state:
+                query_object.add(Q(payment_state=payment_state), Q.OR)
+            if service_plan:
+                query_object.add(Q(service_plan=service_plan), Q.OR)
+            queryset = queryset.filter(query_object)
+
+        return queryset

@@ -142,8 +142,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=10),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1000),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1400),
     'SIGNING_KEY': 'SECRET',
     'ALGORITHM': 'HS256',
     'AUTH_HEADER_TYPES': ('JWT',),
