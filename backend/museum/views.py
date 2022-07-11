@@ -223,7 +223,7 @@ class InnerExhibitionListAPIView(ListAPIView):
         floor = self.request.GET.get('floor')
         if floor:
             query_object = Q()
-            query_object.add(Q(floor_en=floor), Q.OR)
+            query_object.add(Q(exhibition__floor_en=floor), Q.OR)
             queryset = queryset.filter(query_object)
             return queryset
         return queryset
