@@ -3,6 +3,15 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializer import *
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+
+
+class InnerExhibitionSetPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class ExhibitionAPIView(APIView):
@@ -107,19 +116,6 @@ class InnerExhibitionAPIView(APIView):
         except Exhibition.DoesNotExist:
             return None
 
-    def get(self, request, exhibition_pk):
-        exhibition = self.get_exhibition(pk=exhibition_pk)
-        if exhibition is None:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND
-            )
-        inner_exhibition = exhibition.inner_exhibition.all()
-        serializer_cls = InnerExhibitionSerializer(inner_exhibition, many=True)
-        return Response(
-            serializer_cls.data,
-            status=status.HTTP_200_OK
-        )
-
     def post(self, request, exhibition_pk):
         exhibition = self.get_exhibition(pk=exhibition_pk)
         if exhibition is None:
@@ -138,6 +134,27 @@ class InnerExhibitionAPIView(APIView):
             serializer_cls.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class InnerExhibitionListAPIView(ListAPIView):
+    pagination_class = InnerExhibitionSetPagination
+    serializer_class = InnerExhibitionSerializer
+
+    def get_queryset(self):
+        exhibition_pk = self.kwargs['exhibition_pk']
+        queryset = InnerExhibition.objects.filter(exhibition=exhibition_pk)
+        queryset = self.filter_queryset(queryset)
+        return queryset
+
+    def filter_queryset(self, queryset):
+        floor = self.request.GET.get('floor')
+        query_object = Q()
+
+        if floor:
+            query_object.add(Q(exhibition__floor_en=floor), Q.OR)
+            queryset = queryset.filter(query_object)
+            return queryset
+        return queryset
 
 
 class InnerExhibitionDetailAPIView(APIView):
