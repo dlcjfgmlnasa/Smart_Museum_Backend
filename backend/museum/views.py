@@ -8,6 +8,12 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 
 
+class ExhibitionSetPagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
 class InnerExhibitionSetPagination(PageNumberPagination):
     page_size = 6
     page_size_query_param = 'page_size'
@@ -108,6 +114,20 @@ class ExhibitionDetailAPIView(APIView):
         )
 
 
+class ExhibitionListAPIView(ListAPIView):
+    pagination_class = ExhibitionSetPagination
+    serializer_class = ExhibitionSerializer
+
+    def get_queryset(self):
+        user_pk = self.kwargs['user_pk']
+        queryset = Exhibition.objects.filter(user_id=user_pk)
+        queryset = self.filter_queryset(queryset)
+        return queryset
+
+    def filter_queryset(self, queryset):
+        return queryset
+
+
 class InnerExhibitionAPIView(APIView):
     @staticmethod
     def get_exhibition(pk: int):
@@ -134,27 +154,6 @@ class InnerExhibitionAPIView(APIView):
             serializer_cls.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-
-
-class InnerExhibitionListAPIView(ListAPIView):
-    pagination_class = InnerExhibitionSetPagination
-    serializer_class = InnerExhibitionSerializer
-
-    def get_queryset(self):
-        exhibition_pk = self.kwargs['exhibition_pk']
-        queryset = InnerExhibition.objects.filter(exhibition=exhibition_pk)
-        queryset = self.filter_queryset(queryset)
-        return queryset
-
-    def filter_queryset(self, queryset):
-        floor = self.request.GET.get('floor')
-        query_object = Q()
-
-        if floor:
-            query_object.add(Q(exhibition__floor_en=floor), Q.OR)
-            queryset = queryset.filter(query_object)
-            return queryset
-        return queryset
 
 
 class InnerExhibitionDetailAPIView(APIView):
@@ -210,16 +209,21 @@ class InnerExhibitionDetailAPIView(APIView):
         )
 
 
-class InnerExhibitionByUser(APIView):
-    def get(self, request, user_pk):
-        inner_exhibition = InnerExhibition.objects.filter(exhibition__user_id=user_pk)
-        if inner_exhibition is None:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND
-            )
-        serializer_cls = InnerExhibitionSerializer(inner_exhibition, many=True)
+class InnerExhibitionListAPIView(ListAPIView):
+    pagination_class = InnerExhibitionSetPagination
+    serializer_class = InnerExhibitionSerializer
 
-        return Response(
-            serializer_cls.data,
-            status=status.HTTP_200_OK
-        )
+    def get_queryset(self):
+        user_pk = self.kwargs['user_pk']
+        queryset = InnerExhibition.objects.filter(exhibition__user_id=user_pk)
+        queryset = self.filter_queryset(queryset)
+        return queryset
+
+    def filter_queryset(self, queryset):
+        floor = self.request.GET.get('floor')
+        if floor:
+            query_object = Q()
+            query_object.add(Q(floor_en=floor), Q.OR)
+            queryset = queryset.filter(query_object)
+            return queryset
+        return queryset

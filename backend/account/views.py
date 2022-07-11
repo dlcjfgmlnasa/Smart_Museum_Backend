@@ -86,7 +86,6 @@ class AccountListView(ListAPIView):
 
     def get_queryset(self):
         queryset = User.objects.filter()
-        # User.objects.filter(username__in=)
         queryset = self.filter_queryset(queryset)
         return queryset
 

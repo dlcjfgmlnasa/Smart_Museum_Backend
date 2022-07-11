@@ -10,16 +10,17 @@ urlpatterns = [
     path('exhibition/<int:pk>/',
          ExhibitionDetailAPIView.as_view(),
          name='exhibition - read/edit/delete (based pk)'),
+    path('exhibition/<int:user_pk>/list/',
+         ExhibitionListAPIView.as_view(),
+         name='exhibition - read list (based pk)'),
+
     path('exhibition/<int:exhibition_pk>/inner_exhibition/',
          InnerExhibitionAPIView.as_view(),
-         name='inner exhibition - create (based exhibition_pk)'),
-    path('exhibition/<int:exhibition_pk>/inner_exhibition/list/',
-         InnerExhibitionListAPIView.as_view(),
          name='inner exhibition - create (based exhibition_pk)'),
     path('inner_exhibition/<int:pk>/',
          InnerExhibitionDetailAPIView.as_view(),
          name='inner exhibition - read/edit/delete (based pk)'),
     path('inner_exhibition/user/<int:user_pk>/',
-         InnerExhibitionByUser.as_view(),
-         name='inner exhibition by user- read/edit/delete (based pk)')
+         InnerExhibitionListAPIView.as_view(),
+         name='inner exhibition by user- read')
 ]
