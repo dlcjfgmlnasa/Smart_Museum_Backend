@@ -114,6 +114,22 @@ class ExhibitionDetailAPIView(APIView):
         )
 
 
+class ExhibitionFloorAPIView(APIView):
+    def get(self, request):
+        user_id = request.auth.payload['user_id']
+        exhibitions = Exhibition.objects.filter(user_id=user_id)
+        if exhibitions.count() == 0:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        floors = []
+        for exhibition in exhibitions:
+            floors.append(exhibition.floor_ko)
+        floors = list(set(floors))
+        return Response({
+            'result': floors
+        }, status=status.HTTP_200_OK)
+
+
 class ExhibitionListAPIView(ListAPIView):
     pagination_class = ExhibitionSetPagination
     serializer_class = ExhibitionSerializer

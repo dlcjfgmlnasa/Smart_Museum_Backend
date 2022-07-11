@@ -10,10 +10,12 @@ urlpatterns = [
     path('exhibition/<int:pk>/',
          ExhibitionDetailAPIView.as_view(),
          name='exhibition - read/edit/delete (based pk)'),
+    path('exhibition/floor/',
+         ExhibitionFloorAPIView.as_view(),
+         name='exhibition - floor list'),
     path('exhibition/<int:user_pk>/list/',
          ExhibitionListAPIView.as_view(),
          name='exhibition - read list (based pk)'),
-
     path('exhibition/<int:exhibition_pk>/inner_exhibition/',
          InnerExhibitionAPIView.as_view(),
          name='inner exhibition - create (based exhibition_pk)'),
