@@ -152,6 +152,20 @@ class InnerExhibitionAPIView(APIView):
         except Exhibition.DoesNotExist:
             return None
 
+    def get(self, request, exhibition_pk):
+        exhibition = self.get_exhibition(pk=exhibition_pk)
+        if exhibition is None:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        inner_exhibition = exhibition.inner_exhibition.all()
+        serializer_cls = InnerExhibitionSerializer(inner_exhibition, many=True)
+        return Response(
+            serializer_cls.data,
+            status=status.HTTP_200_OK
+        )
+
     def post(self, request, exhibition_pk):
         exhibition = self.get_exhibition(pk=exhibition_pk)
         if exhibition is None:
