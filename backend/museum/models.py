@@ -82,6 +82,17 @@ class InnerExhibition(TimeStampedModel):
         null=True,
         db_column='IMAGE'
     )
+    # 전시관 좌표 X 축
+    x_coordinate = models.CharField(
+        max_length=10,
+        null=True, blank=True,
+        db_column='X_COORDINATE'
+    )
+    y_coordinate = models.CharField(
+        max_length=10,
+        null=True, blank=True,
+        db_column='Y_COORDINATE'
+    )
 
     class Meta:
         db_table = 'SM_INNER_EXHIBITION'

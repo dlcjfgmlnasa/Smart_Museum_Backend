@@ -46,5 +46,7 @@ class InnerExhibitionSerializer(serializers.ModelSerializer):
             'vr_link',
             'order',
             'explanation',
-            'image'
+            'image',
+            'x_coordinate',
+            'y_coordinate'
         )
