@@ -239,6 +239,20 @@ class InnerExhibitionDetailAPIView(APIView):
         )
 
 
+class InnerExhibitionPaginationListAPIView(ListAPIView):
+    pagination_class = InnerExhibitionSetPagination
+    serializer_class = InnerExhibitionSerializer
+
+    def get_queryset(self):
+        user_pk = self.kwargs['user_pk']
+        queryset = InnerExhibition.objects.filter(exhibition__user_id=user_pk)
+        queryset = self.filter_queryset(queryset)
+        return queryset
+
+    def filter_queryset(self, queryset):
+        return queryset
+
+
 class InnerExhibitionListAPIView(APIView):
     def get(self, request):
         user_id = request.auth.payload['user_id']
