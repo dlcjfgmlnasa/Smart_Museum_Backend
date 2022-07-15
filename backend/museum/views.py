@@ -239,21 +239,17 @@ class InnerExhibitionDetailAPIView(APIView):
         )
 
 
-class InnerExhibitionListAPIView(ListAPIView):
-    pagination_class = InnerExhibitionSetPagination
-    serializer_class = InnerExhibitionSerializer
+class InnerExhibitionListAPIView(APIView):
+    def get(self, request):
+        user_id = request.auth.payload['user_id']
+        inner_exhibition = InnerExhibition.objects.filter(exhibition__user_id=user_id)
+        if inner_exhibition.count() == 0:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-    def get_queryset(self):
-        user_pk = self.kwargs['user_pk']
-        queryset = InnerExhibition.objects.filter(exhibition__user_id=user_pk)
-        queryset = self.filter_queryset(queryset)
-        return queryset
-
-    def filter_queryset(self, queryset):
-        floor = self.request.GET.get('floor')
-        if floor:
-            query_object = Q()
-            query_object.add(Q(exhibition__floor_en=floor), Q.OR)
-            queryset = queryset.filter(query_object)
-            return queryset
-        return queryset
+        serializer_cls = InnerExhibitionSerializer(inner_exhibition, many=True)
+        return Response(
+            serializer_cls.data,
+            status=status.HTTP_200_OK
+        )

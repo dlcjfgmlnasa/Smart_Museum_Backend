@@ -22,7 +22,7 @@ urlpatterns = [
     path('inner_exhibition/<int:pk>/',
          InnerExhibitionDetailAPIView.as_view(),
          name='inner exhibition - read/edit/delete (based pk)'),
-    path('inner_exhibition/user/<int:user_pk>/',
+    path('inner_exhibition/list/',
          InnerExhibitionListAPIView.as_view(),
          name='inner exhibition by user- read')
 ]
