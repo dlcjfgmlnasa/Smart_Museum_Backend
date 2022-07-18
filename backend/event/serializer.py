@@ -7,7 +7,7 @@ from rest_framework.serializers import ModelSerializer
 
 
 class EventSimpleSerializer(ModelSerializer):
-    inner_exhibition = InnerExhibitionSerializer(many=True)
+    inner_exhibition = InnerExhibitionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Event

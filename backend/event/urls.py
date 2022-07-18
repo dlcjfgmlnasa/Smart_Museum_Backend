@@ -16,4 +16,7 @@ urlpatterns = [
     path('mission/<int:inner_exhibition_pk>/',
          views.EventMissionAPIView.as_view(),
          name='event inner_exhibition create/read list'),
+    path('mission/',
+         views.EventMissionListView.as_view(),
+         name='event mission')
 ]

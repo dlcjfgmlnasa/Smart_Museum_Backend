@@ -160,3 +160,42 @@ class EventMissionAPIView(APIView):
             serializer_cls.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class EventMissionListView(APIView):
+    @staticmethod
+    def get_inner_exhibition(pk):
+        try:
+            model = InnerExhibition.objects.get(pk=pk)
+            return model
+        except InnerExhibition.DoesNotExist:
+            return None
+
+    def post(self, request):
+        inner_exhibition_pk_list = request.GET.getlist('inner_exhibition', None)
+
+        inner_exhibitions = []
+        for inner_exhibition_pk in inner_exhibition_pk_list:
+            inner_exhibition = self.get_inner_exhibition(pk=inner_exhibition_pk)
+            if inner_exhibition is None:
+                return Response(
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            inner_exhibitions.append(inner_exhibition)
+
+        serializer_cls = EventMissionSerializer(data=request.data)
+        if serializer_cls.is_valid():
+            serializer_cls.save(type='Mission')
+            event = Event.objects.get(pk=int(serializer_cls.data['pk']))
+
+            for inner_exhibition in inner_exhibitions:
+                inner_exhibition.event.add(event)
+                inner_exhibition.save()
+            return Response(
+                serializer_cls.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            data=serializer_cls.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
