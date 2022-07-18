@@ -1,11 +1,19 @@
 # -*- coding:utf-8 -*-
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from .models import Event
 from museum.models import InnerExhibition, Exhibition
+from rest_framework.pagination import PageNumberPagination
 from event.serializer import EventNormalSerializer, EventSimpleSerializer, EventMissionSerializer
 from django.contrib.auth import get_user_model
+
+
+class EventSetPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class EventAPIView(APIView):
@@ -35,6 +43,22 @@ class EventAPIView(APIView):
             serializer_cls.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class EventListAPIView(ListAPIView):
+    pagination_class = EventSetPagination
+    serializer_class = EventSimpleSerializer
+
+    def get_queryset(self):
+        user = get_user_model().objects.get(
+            id=self.request.auth.payload['user_id']
+        )
+        event = user.event.all()
+        event = self.filter_queryset(event)
+        return event
+
+    def filter_queryset(self, queryset):
+        return queryset
 
 
 class EventDetailAPIView(APIView):
