@@ -135,12 +135,15 @@ class ExhibitionListAPIView(ListAPIView):
     serializer_class = ExhibitionSerializer
 
     def get_queryset(self):
+        floor_en = self.request.GET.get('floor_en')
         user_pk = self.kwargs['user_pk']
         queryset = Exhibition.objects.filter(user_id=user_pk)
-        queryset = self.filter_queryset(queryset)
-        return queryset
+        query_object = Q()
+        query_object.add(Q(user_id=user_pk), Q.AND)
+        if floor_en:
+            query_object.add(Q(floor_en=floor_en), Q.AND)
 
-    def filter_queryset(self, queryset):
+        queryset = queryset.filter(query_object)
         return queryset
 
 
