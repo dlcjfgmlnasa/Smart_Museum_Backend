@@ -48,6 +48,7 @@ class AccountSerializer(serializers.ModelSerializer):
             'museum_location',
             'payment_state',
             'service_plan',
+            'payment_state_string'
         )
         write_only_fields = ('pk', 'username')
 

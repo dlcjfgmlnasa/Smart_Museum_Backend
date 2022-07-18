@@ -42,6 +42,15 @@ class User(AbstractUser, TimeStampedModel):
         db_column='SERVICE_PLAN'
     )
 
+    @property
+    def payment_state_string(self):
+        if self.payment_state == 'None' or self.payment_state == '1':
+            return '미사용'
+        if self.payment_state == '2':
+            return '결제 승인 진행 중'
+        if self.payment_state == '3':
+            return '결제 완료'
+
     class Meta:
         db_table = 'SM_USER'
         ordering = ['pk']

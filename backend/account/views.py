@@ -112,3 +112,16 @@ class AccountListView(ListAPIView):
             queryset = queryset.filter(query_object)
 
         return queryset
+
+
+class AccountList2View(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        if users.count() == 0:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer_cls = AccountSerializer(users, many=True)
+        return Response(
+            serializer_cls.data,
+            status=status.HTTP_200_OK
+        )
