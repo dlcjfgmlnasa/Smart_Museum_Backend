@@ -8,6 +8,7 @@ from museum.models import InnerExhibition, Exhibition
 from rest_framework.pagination import PageNumberPagination
 from event.serializer import EventNormalSerializer, EventSimpleSerializer, EventMissionSerializer
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 
 class EventSetPagination(PageNumberPagination):
@@ -50,15 +51,11 @@ class EventListAPIView(ListAPIView):
     serializer_class = EventSimpleSerializer
 
     def get_queryset(self):
-        user = get_user_model().objects.get(
-            id=self.request.auth.payload['user_id']
-        )
-        event = user.event.all()
-        event = self.filter_queryset(event)
-        return event
-
-    def filter_queryset(self, queryset):
-        return queryset
+        event_type = self.request.GET.get('event_type')
+        events = Event.objects.filter(user_id=self.request.auth.payload['user_id'])
+        if event_type:
+            events = events.filter(type=event_type)
+        return events
 
 
 class EventDetailAPIView(APIView):
