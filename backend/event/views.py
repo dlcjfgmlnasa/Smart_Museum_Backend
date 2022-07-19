@@ -136,6 +136,30 @@ class EventMissionAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
+    def put(self, request, inner_exhibition_pk):
+        user = get_user_model().objects.get(
+            id=self.request.auth.payload['user_id']
+        )
+
+        inner_exhibition = self.get_inner_exhibition(pk=inner_exhibition_pk)
+        if inner_exhibition is None:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer_cls = EventMissionSerializer(inner_exhibition, data=request.data)
+        if serializer_cls.is_valid():
+            serializer_cls.save(user=user)
+
+            return Response(
+                serializer_cls.data,
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            serializer_cls.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     def post(self, request, inner_exhibition_pk):
         user = get_user_model().objects.get(
             id=self.request.auth.payload['user_id']
