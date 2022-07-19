@@ -42,6 +42,7 @@ class EventNormalSerializer(ModelSerializer):
 
 class EventMissionSerializer(ModelSerializer):
     user = AccountSerializer(read_only=True)
+    inner_exhibition = InnerExhibitionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Event
@@ -53,6 +54,7 @@ class EventMissionSerializer(ModelSerializer):
             'end_dt',
             'type',
             'explanation',
-            'image'
+            'image',
+            'inner_exhibition'
         )
 

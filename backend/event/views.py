@@ -140,6 +140,9 @@ class EventMissionAPIView(APIView):
         )
 
     def post(self, request, inner_exhibition_pk):
+        user = get_user_model().objects.get(
+            id=self.request.auth.payload['user_id']
+        )
         inner_exhibition = self.get_inner_exhibition(pk=inner_exhibition_pk)
         if inner_exhibition is None:
             return Response(
@@ -148,6 +151,7 @@ class EventMissionAPIView(APIView):
         serializer_cls = EventMissionSerializer(data=request.data)
         if serializer_cls.is_valid():
             serializer_cls.save(type='Mission')
+            serializer_cls.save(user=user)
             event = Event.objects.get(pk=int(serializer_cls.data['pk']))
             inner_exhibition.event.add(event)
             inner_exhibition.save()
@@ -172,6 +176,9 @@ class EventMissionListView(APIView):
             return None
 
     def post(self, request):
+        user = get_user_model().objects.get(
+            id=self.request.auth.payload['user_id']
+        )
         inner_exhibition_pk_list = request.GET.getlist('inner_exhibition', None)
 
         inner_exhibitions = []
@@ -186,11 +193,14 @@ class EventMissionListView(APIView):
         serializer_cls = EventMissionSerializer(data=request.data)
         if serializer_cls.is_valid():
             serializer_cls.save(type='Mission')
+            serializer_cls.save(user=user)
             event = Event.objects.get(pk=int(serializer_cls.data['pk']))
 
             for inner_exhibition in inner_exhibitions:
                 inner_exhibition.event.add(event)
                 inner_exhibition.save()
+
+            event.save()
             return Response(
                 serializer_cls.data,
                 status=status.HTTP_200_OK
