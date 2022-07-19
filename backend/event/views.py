@@ -113,6 +113,22 @@ class EventDetailAPIView(APIView):
         )
 
 
+class EventDetailAllAPIView(APIView):
+    def delete(self, request, pk):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        inner_exhibitions = event.inner_exhibition.all()
+        for inner_exhibition in inner_exhibitions:
+            inner_exhibition.delete()
+        event.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class EventMissionAPIView(APIView):
     @staticmethod
     def get_inner_exhibition(pk):
