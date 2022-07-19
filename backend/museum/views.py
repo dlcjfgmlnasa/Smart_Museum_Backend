@@ -137,13 +137,13 @@ class ExhibitionListAPIView(ListAPIView):
     def get_queryset(self):
         floor_en = self.request.GET.get('floor_en')
         user_pk = self.kwargs['user_pk']
-        queryset = Exhibition.objects.filter(user_id=user_pk)
+
         query_object = Q()
         query_object.add(Q(user_id=user_pk), Q.AND)
         if floor_en:
             query_object.add(Q(floor_en=floor_en), Q.AND)
 
-        queryset = queryset.filter(query_object)
+        queryset = Exhibition.objects.filter(query_object)
         return queryset
 
 
@@ -247,9 +247,14 @@ class InnerExhibitionPaginationListAPIView(ListAPIView):
     serializer_class = InnerExhibitionSerializer
 
     def get_queryset(self):
+        floor_en = self.request.GET.get('floor_en')
         user_pk = self.kwargs['user_pk']
-        queryset = InnerExhibition.objects.filter(exhibition__user_id=user_pk)
-        queryset = self.filter_queryset(queryset)
+        query_object = Q()
+        query_object.add(Q(exhibition__user_id=user_pk), Q.AND)
+        if floor_en:
+            query_object.add(Q(exhibition__floor_en=floor_en), Q.AND)
+
+        queryset = InnerExhibition.objects.filter(query_object)
         return queryset
 
     def filter_queryset(self, queryset):
