@@ -122,9 +122,7 @@ class EventDetailAllAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        inner_exhibitions = event.inner_exhibition.all()
-        for inner_exhibition in inner_exhibitions:
-            inner_exhibition.delete()
+        event.inner_exhibition.clear()
         event.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
