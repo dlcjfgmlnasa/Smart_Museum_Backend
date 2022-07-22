@@ -147,6 +147,20 @@ class ExhibitionListAPIView(ListAPIView):
         return queryset
 
 
+class InnerExhibitionSimpleAPIView(APIView):
+    def get(self, requests, pk):
+        try:
+            inner_exhibition = InnerExhibition.objects.get(pk=pk)
+        except InnerExhibition.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer_cls = InnerExhibitionSerializer(inner_exhibition)
+        return Response(
+            serializer_cls.data,
+            status=status.HTTP_200_OK
+        )
+
+
 class InnerExhibitionAPIView(APIView):
     @staticmethod
     def get_exhibition(pk: int):
