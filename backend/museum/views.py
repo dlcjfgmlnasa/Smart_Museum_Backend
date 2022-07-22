@@ -160,6 +160,33 @@ class InnerExhibitionSimpleAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
+    def put(self, requests, pk):
+        try:
+            inner_exhibition = InnerExhibition.objects.get(pk=pk)
+        except InnerExhibition.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer_cls = InnerExhibitionSerializer(inner_exhibition, data=requests.data)
+        if serializer_cls.is_valid():
+            serializer_cls.save()
+            return Response(
+                serializer_cls.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serializer_cls.errors,
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    def delete(self, requests, pk):
+        try:
+            inner_exhibition = InnerExhibition.objects.get(pk=pk)
+        except InnerExhibition.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        inner_exhibition.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class InnerExhibitionAPIView(APIView):
     @staticmethod
