@@ -36,6 +36,7 @@ urlpatterns = [
     path('exhibition-add', index),
     path('exhibition-modify', index),
     path('inner-exhibition', index),
+    path('inner-exhibition/', index),
     path('inner-exhibition-detail', index),
     path('inner-exhibition-add', index),
     path('inner-exhibition-modify', index),
