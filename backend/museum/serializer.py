@@ -4,8 +4,26 @@ from rest_framework import serializers
 from account.serializer import AccountSerializer
 
 
+class InnerExhibitionSimpleSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = InnerExhibition
+        fields = (
+            'pk',
+            'name',
+            'vr_link',
+            'order',
+            'explanation',
+            'image',
+            'x_coordinate',
+            'y_coordinate'
+        )
+
+
 class ExhibitionSerializer(serializers.ModelSerializer):
     user = AccountSerializer(read_only=True)
+    inner_exhibition = InnerExhibitionSimpleSerializer(read_only=True, many=True)
 
     class Meta:
         model = Exhibition
@@ -16,7 +34,8 @@ class ExhibitionSerializer(serializers.ModelSerializer):
             'floor_en',
             'house_ko',
             'house_en',
-            'drawing_image'
+            'drawing_image',
+            'inner_exhibition'
         )
 
 
