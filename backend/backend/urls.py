@@ -40,9 +40,12 @@ urlpatterns = [
     path('inner-exhibition-add', index),
     path('inner-exhibition-modify', index),
     path('event', index),
-    path('event-mission-detail', index),
+    path('event-add', index),
+    path('event-detail', index),
+    path('event-modify', index),
     path('event-mission-add', index),
     path('event-mission-detail', index),
+    path('event-mission-modify', index),
 
     path('service', index),
     path('service-select', index),
