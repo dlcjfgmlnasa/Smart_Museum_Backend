@@ -11,7 +11,7 @@ class Beacon(TimeStampedModel):
         db_column='INNER_EXHIBITION_ID'
     )
     uuid = models.CharField(
-        max_length=100,
+        max_length=100, unique=True,
         null=False, blank=False,
         db_column='UUID'
     )
@@ -22,7 +22,8 @@ class Beacon(TimeStampedModel):
 
     class Meta:
         db_table = 'SM_BEACON'
-        ordering = ['pk']
+        ordering = ['id']
+        unique_together = ['id', 'uuid']
 
 
 class Log(TimeStampedModel):

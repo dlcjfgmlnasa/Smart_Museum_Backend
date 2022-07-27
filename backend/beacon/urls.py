@@ -6,8 +6,11 @@ from . import views
 urlpatterns = [
     path('',
          views.BeaconAPIView.as_view(),
-         name='beacon get/put/delete'),
+         name='beacon get/delete'),
     path('<int:inner_exhibition_pk>/',
          views.BeaconAPIView2.as_view(),
-         name='beacon post')
+         name='beacon post'),
+    path('log/',
+         views.LogAPIView.as_view(),
+         name='log post')
 ]
