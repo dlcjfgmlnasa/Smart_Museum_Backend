@@ -20,6 +20,7 @@ class Log(TimeStampedModel):
     beacon = models.ForeignKey(
         Beacon, null=True,
         on_delete=models.SET_NULL,
+        related_name='log',
         db_column='BEACON_ID'
     )
     sex = models.CharField(
@@ -44,6 +45,7 @@ class DayLog(TimeStampedModel):
     inner_exhibition = models.ForeignKey(
         InnerExhibition, null=True,
         on_delete=models.SET_NULL,
+        related_name='day_log',
         db_column='INNER_EXHIBITION_ID'
     )
     date = models.DateField(

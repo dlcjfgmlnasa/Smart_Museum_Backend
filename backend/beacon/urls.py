@@ -12,5 +12,5 @@ urlpatterns = [
          name='beacon post'),
     path('log/',
          views.LogAPIView.as_view(),
-         name='log post')
+         name='log post'),
 ]

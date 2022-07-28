@@ -17,10 +17,7 @@ urlpatterns = [
     path('inner_exhibition/<int:inner_exhibition_pk>/day/',
          views.InnerExhibitionDayAPIView.as_view(),
          name='inner_exhibition today'),
-    path('inner_exhibition/<int:inner_exhibition_pk>/popularity/',
-         views.InnerExhibitionPopularityAPIView.as_view(),
-         name='inner_exhibition popularity'),
     path('inner_exhibition/<int:inner_exhibition_pk>/time/',
          views.InnerExhibitionTimeAPIView.as_view(),
-         name='inner_exhibition popularity')
+         name='inner_exhibition time')
 ]

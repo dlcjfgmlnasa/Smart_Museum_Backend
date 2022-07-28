@@ -155,7 +155,6 @@ class ExhibitionTimeAPIView(APIView):
                     times[k].append(v)
         else:
             for inner_exhibition in inner_exhibitions:
-                # 누적 박물관 관람객 정보 + 현재 박물관 관람객 정보
                 day_logs = DayLog.objects.filter(
                     inner_exhibition_id=inner_exhibition.id,
                     date__year=date.year, date__month=date.month, date__day=date.day
@@ -189,32 +188,44 @@ class InnerExhibitionDayAPIView(APIView):
             )
         now = datetime.now()
         if now.year == date.year and now.month == date.month and now.day == date.day:
-            pass
+            logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
+            total_sex = {sex_index[0]: 0 for sex_index in Log.SEX_CHOICE}
+            total_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
 
-        logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
-        total_sex = {sex_index[0]: 0 for sex_index in Log.SEX_CHOICE}
-        total_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
+            for log in logs:
+                total_sex[int(log.sex)] = total_sex[int(log.sex)] + 1
+                total_age[int(log.sex)] = total_age[int(log.sex)] + 1
 
-        for log in logs:
-            total_sex[int(log.sex)] = total_sex[int(log.sex)] + 1
-            total_age[int(log.sex)] = total_age[int(log.sex)] + 1
+            total_sex = {dict(Log.SEX_CHOICE)[k]: v for k, v in total_sex.items()}
+            total_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in total_age.items()}
 
-        total_sex = {dict(Log.SEX_CHOICE)[k]: v for k, v in total_sex.items()}
-        total_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in total_age.items()}
+            result = {
+                'audience': logs.count(),
+                'sex': total_sex,
+                'age': total_age
+            }
 
-        result = {
-            'audience': logs.count(),
-            'sex': total_sex,
-            'age': total_age
-        }
+            return Response(
+                result,
+                status=status.HTTP_200_OK
+            )
+        else:
+            day_logs = DayLog.objects.get(
+                inner_exhibition_id=inner_exhibition.id,
+                date__year=date.year, date__month=date.month, date__day=date.day
+            )
+            result = {
+                'audience': sum(day_logs.sex_count.values()),
+                'sex': day_logs.sex_count,
+                'age': day_logs.age_group_count
+            }
+            return Response(
+                result,
+                status=status.HTTP_200_OK
+            )
 
-        return Response(
-            result,
-            status=status.HTTP_200_OK
-        )
 
-
-class InnerExhibitionPopularityAPIView(APIView):
+class InnerExhibitionTimeAPIView(APIView):
     def get(self, request, inner_exhibition_pk):
         try:
             inner_exhibition = InnerExhibition.objects.get(pk=inner_exhibition_pk)
@@ -222,17 +233,33 @@ class InnerExhibitionPopularityAPIView(APIView):
             return Response(
                 status=status.HTTP_404_NOT_FOUND
             )
-        day_logs = DayLog.objects.filter(inner_exhibition_id=inner_exhibition.id)
-        logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
 
+        try:
+            date = request.data['date']
+            date = datetime.fromisoformat(date)
+        except KeyError:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        now = datetime.now()
+        times = {str(hour): [] for hour in range(24)}
+        if now.year == date.year and now.month == date.month and now.day == date.day:
+            logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
+            current_time = {str(hour): logs.filter(int_dt__hour=hour).count() for hour in range(24)}
+            for k, v in current_time.items():
+                times[k].append(v)
+        else:
+            day_logs = DayLog.objects.filter(
+                inner_exhibition_id=inner_exhibition.id,
+                date__year=date.year, date__month=date.month, date__day=date.day
+            )
+            for day_log in day_logs:
+                time_count = day_log.time_count
+                for k, v in time_count.items():
+                    times[k].append(v)
 
+        times = {k: sum(v) for k, v in times.items()}
         return Response(
-            status=status.HTTP_200_OK
-        )
-
-
-class InnerExhibitionTimeAPIView(APIView):
-    def get(self, request, inner_exhibition_pk):
-        return Response(
+            times,
             status=status.HTTP_200_OK
         )

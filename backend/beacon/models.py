@@ -8,6 +8,7 @@ class Beacon(TimeStampedModel):
     inner_exhibition = models.ForeignKey(
         InnerExhibition, null=True,
         on_delete=models.SET_NULL,
+        related_name='beacon',
         db_column='INNER_EXHIBITION_ID'
     )
     uuid = models.CharField(
@@ -26,36 +27,3 @@ class Beacon(TimeStampedModel):
         unique_together = ['id', 'uuid']
 
 
-class Log(TimeStampedModel):
-    SEX_CHOICE = (
-        (1, 'MALE'),
-        (2, 'FEMALE')
-    )
-    AGE_GROUP_CHOICE = (
-        (1, '10'),
-        (2, '20'),
-        (3, '30'),
-        (4, '40'),
-        (5, '50'),
-    )
-    beacon = models.ForeignKey(
-        Beacon, null=True,
-        on_delete=models.SET_NULL,
-        db_column='BEACON_ID'
-    )
-    sex = models.CharField(
-        null=False, blank=False,
-        max_length=25,
-        choices=SEX_CHOICE,
-        db_column='SEX'
-    )
-    age_group = models.CharField(
-        null=False, blank=False,
-        max_length=25,
-        choices=AGE_GROUP_CHOICE,
-        db_column='AGE_GROUP'
-    )
-
-    class Meta:
-        db_table = 'SM_LOG'
-        ordering = ['pk']
