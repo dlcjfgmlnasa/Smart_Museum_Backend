@@ -32,7 +32,7 @@ class ExhibitionDayAPIView(APIView):
             query_object = Q()
             inner_exhibitions = exhibition.inner_exhibition.all()
             for inner_exhibition in inner_exhibitions:
-                query_object.add(Q(beacon__inner_exhibition=inner_exhibition.id), Q.AND)
+                query_object.add(Q(beacon__inner_exhibition=inner_exhibition), Q.OR)
 
             queryset = Log.objects.filter(query_object)
             queryset = queryset.filter(int_dt__year=date.year, int_dt__month=date.month, int_dt__day=date.day)
