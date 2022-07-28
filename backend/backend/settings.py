@@ -47,7 +47,8 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'django_crontab',
 ]
 
 
@@ -55,7 +56,8 @@ LOCAL_APPS = [
     'account',
     'museum',
     'event',
-    'beacon'
+    'beacon',
+    'history',
 ]
 
 
@@ -151,6 +153,8 @@ SIMPLE_JWT = {
 
 CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000',
                          'http://localhost:3000',
+                         'http://localhost:5000',
+                         'http://127.0.0.1:5000',
                          'http://59.19.102.174:8888']
 
 CORS_ALLOW_CREDENTIALS = True
@@ -164,8 +168,12 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
+
+CRONJOBS = [
+    ('*/5 * * * *', 'backend.crontab_job.crontab_log_day_count_job')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
