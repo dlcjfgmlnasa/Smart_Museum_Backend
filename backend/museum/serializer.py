@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
 from museum.models import *
+from beacon.models import *
 from rest_framework import serializers
 from account.serializer import AccountSerializer
+from beacon.serializer import BeaconSerializer
 
 
 class InnerExhibitionSimpleSerializer(serializers.ModelSerializer):
@@ -55,6 +57,7 @@ class SimpleExhibitionSerializer(serializers.ModelSerializer):
 class InnerExhibitionSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(read_only=True)
     exhibition = SimpleExhibitionSerializer(read_only=True)
+    beacon = BeaconSerializer(read_only=True, many=True)
 
     class Meta:
         model = InnerExhibition
@@ -67,5 +70,6 @@ class InnerExhibitionSerializer(serializers.ModelSerializer):
             'explanation',
             'image',
             'x_coordinate',
-            'y_coordinate'
+            'y_coordinate',
+            'beacon'
         )
