@@ -2,7 +2,7 @@
 from django.db import models
 from beacon.models import Beacon
 from backend.model import TimeStampedModel
-from museum.models import InnerExhibition
+from museum.models import InnerExhibition, Exhibition
 
 
 class Log(TimeStampedModel):
@@ -16,6 +16,7 @@ class Log(TimeStampedModel):
         (3, '30'),
         (4, '40'),
         (5, '50'),
+        (6, '50 >= '),
     )
     beacon = models.ForeignKey(
         Beacon, null=True,
@@ -73,12 +74,31 @@ class DayLog(TimeStampedModel):
         null=False, blank=False,
         db_column='TIME_COUNT'
     )
-    footprint = models.JSONField(
-        null=False, blank=False,
-        db_column='FOOT_PRINT'
-    )
 
     class Meta:
         db_table = 'SM_DAY_LOG'
         ordering = ['pk']
         unique_together = ['date', 'inner_exhibition']
+
+
+class FootPrintLog(TimeStampedModel):
+    exhibition = models.ForeignKey(
+        Exhibition, null=True,
+        on_delete=models.SET_NULL,
+        related_name='foot_print',
+        db_column='EXHIBITION_ID'
+    )
+    date = models.DateField(
+        null=False, blank=False,
+        db_column='DATE'
+    )
+    foot_printing_count = models.JSONField(
+        null=False, blank=False,
+        db_column='FOOT_PRINT_COUNT'
+    )
+
+    class Meta:
+        db_table = 'SM_FOOT_PRINT_LOG'
+        ordering = ['pk']
+        unique_together = ['date', 'exhibition']
+

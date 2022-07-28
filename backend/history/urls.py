@@ -13,6 +13,9 @@ urlpatterns = [
     path('exhibition/<int:exhibition_pk>/time/',
          views.ExhibitionTimeAPIView.as_view(),
          name='exhibition time'),
+    path('exhibition/<int:exhibition_pk>/foot_print/',
+         views.ExhibitionFootPrintAPIView.as_view(),
+         name='exhibition foot print'),
 
     path('inner_exhibition/<int:inner_exhibition_pk>/day/',
          views.InnerExhibitionDayAPIView.as_view(),

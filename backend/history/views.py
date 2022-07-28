@@ -1,15 +1,13 @@
 # -*- coding:utf-8 -*-
-import requests
 from datetime import datetime
-from beacon.models import Beacon
+from museum.serializer import InnerExhibitionSimpleSerializer
 from museum.models import Exhibition, InnerExhibition
-from history.models import Log, DayLog
+from history.models import Log, DayLog, FootPrintLog
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializer import BeaconSerializer, LogSerializer
-from django.utils import timezone
 from django.db.models import Q
+import operator
 
 
 class ExhibitionDayAPIView(APIView):
@@ -168,6 +166,71 @@ class ExhibitionTimeAPIView(APIView):
             times,
             status=status.HTTP_200_OK
         )
+
+
+class ExhibitionFootPrintAPIView(APIView):
+    def get(self, request, exhibition_pk):
+        try:
+            exhibition = Exhibition.objects.get(pk=exhibition_pk)
+        except Exhibition.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            date = request.data['date']
+            date = datetime.fromisoformat(date)
+        except KeyError:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        now = datetime.now()
+        if now.year == date.year and now.month == date.month and now.day == date.day:
+            total_footprint = {
+                idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+                for idx in range(exhibition.inner_exhibition.count())}
+            logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
+
+            mac_address_list = list(set([log.mac_address for log in logs]))
+            footprint__temp = {mad_address: [] for mad_address in mac_address_list}
+
+            for mad_address in mac_address_list:
+                mac_address_log = logs.filter(mac_address=mad_address).order_by('int_dt')
+                footprint__temp[mad_address] = [query.beacon.inner_exhibition.id for query in mac_address_log]
+
+            for key, values in footprint__temp.items():
+                sample = [values[0]]
+                count = 0
+                for i, value in enumerate(values[1:]):
+                    if sample[count] != value:
+                        sample.append(value)
+                        count += 1
+
+                for n, inner_exhibition_idx in enumerate(sample):
+                    total_footprint[n][inner_exhibition_idx] += 1
+
+            result = {}
+            for key, stats in total_footprint.items():
+                value = max(stats.items(), key=operator.itemgetter(1))
+                if value[1] == 0:
+                    result[key] = None
+                else:
+                    result[key] = value[0]
+            result_pk_list = [v for v in result.values() if v is not None]
+        else:
+            foot_print = FootPrintLog.objects.get(
+                exhibition=exhibition,
+                date__year=date.year, date__month=date.month, date__day=date.day
+            )
+            result_pk_list = foot_print.foot_printing_count
+        contents = []
+        for rank, inner_exhibition_pk in enumerate(result_pk_list):
+            inner_exhibition = InnerExhibition.objects.get(pk=inner_exhibition_pk)
+            contents.append({
+                'rank': rank+1,
+                'inner_exhibitions': InnerExhibitionSimpleSerializer(inner_exhibition).data
+            })
+        return Response(contents, status=status.HTTP_204_NO_CONTENT)
 
 
 class InnerExhibitionDayAPIView(APIView):
