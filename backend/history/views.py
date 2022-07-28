@@ -20,7 +20,7 @@ class ExhibitionDayAPIView(APIView):
             )
 
         try:
-            date = request.data['date']
+            date = request.GET['date']
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -135,7 +135,7 @@ class ExhibitionTimeAPIView(APIView):
             )
 
         try:
-            date = request.data['date']
+            date = request.GET['date']
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -178,7 +178,7 @@ class ExhibitionFootPrintAPIView(APIView):
             )
 
         try:
-            date = request.data['date']
+            date = request.GET['date']
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -243,7 +243,7 @@ class InnerExhibitionDayAPIView(APIView):
             )
 
         try:
-            date = request.data['date']
+            date = request.GET['date']
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -298,7 +298,7 @@ class InnerExhibitionTimeAPIView(APIView):
             )
 
         try:
-            date = request.data['date']
+            date = request.GET['date']
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
