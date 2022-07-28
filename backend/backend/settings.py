@@ -172,7 +172,7 @@ USE_TZ = False
 
 
 CRONJOBS = [
-    ('*/5 * * * *', 'backend.crontab_job.crontab_log_day_count_job')
+    ('* 1 * * *', 'backend.crontab_job.main_crontab')
 ]
 
 # Static files (CSS, JavaScript, Images)
