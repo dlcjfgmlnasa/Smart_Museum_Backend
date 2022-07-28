@@ -64,7 +64,8 @@ urlpatterns += [
     path('api/v1/account/', include('account.urls')),
     path('api/v1/museum/', include('museum.urls')),
     path('api/v1/event/', include('event.urls')),
-    path('api/v1/beacon/', include('beacon.urls'))
+    path('api/v1/beacon/', include('beacon.urls')),
+    path('api/v1/history/', include('history.urls')),
 ]
 urlpatterns += [
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
