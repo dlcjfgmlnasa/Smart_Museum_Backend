@@ -6,7 +6,6 @@ from history.models import Log, DayLog, FootPrintLog
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import Q
 import operator
 
 
@@ -272,10 +271,14 @@ class InnerExhibitionDayAPIView(APIView):
                 status=status.HTTP_200_OK
             )
         else:
-            day_logs = DayLog.objects.get(
-                inner_exhibition_id=inner_exhibition.id,
-                date__year=date.year, date__month=date.month, date__day=date.day
-            )
+            try:
+                day_logs = DayLog.objects.get(
+                    inner_exhibition_id=inner_exhibition.id,
+                    date__year=date.year, date__month=date.month, date__day=date.day
+                )
+            except DayLog.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
             result = {
                 'audience': sum(day_logs.sex_count.values()),
                 'sex': day_logs.sex_count,

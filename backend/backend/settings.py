@@ -172,7 +172,7 @@ USE_TZ = False
 
 
 CRONJOBS = [
-    ('* 1 * * *', 'backend.crontab_job.main_crontab')
+    ('* 1 * * *', 'backend.crontab_job.main_crontab', '>> schedule.log')
 ]
 
 # Static files (CSS, JavaScript, Images)
