@@ -14,4 +14,5 @@ class LogSerializer(serializers.ModelSerializer):
             'beacon',
             'sex',
             'age_group',
+            'mac_address'
         )

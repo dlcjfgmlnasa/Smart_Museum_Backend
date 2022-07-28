@@ -35,6 +35,11 @@ class Log(TimeStampedModel):
         choices=AGE_GROUP_CHOICE,
         db_column='AGE_GROUP'
     )
+    mac_address = models.CharField(
+        null=False, blank=False,
+        max_length=25,
+        db_column='MAC_ADDRESS'
+    )
 
     class Meta:
         db_table = 'SM_LOG'
@@ -67,6 +72,10 @@ class DayLog(TimeStampedModel):
     time_count = models.JSONField(
         null=False, blank=False,
         db_column='TIME_COUNT'
+    )
+    footprint = models.JSONField(
+        null=False, blank=False,
+        db_column='FOOT_PRINT'
     )
 
     class Meta:

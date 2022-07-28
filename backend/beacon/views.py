@@ -7,12 +7,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from beacon.serializer import BeaconSerializer
 from museum.serializer import InnerExhibitionSimpleSerializer, SimpleExhibitionSerializer
-# from museum.serializer import
+from rest_framework.permissions import AllowAny
 from history.serializer import LogSerializer
 from django.utils import timezone
 
 
 class LogAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         uuid = request.GET['uuid']
         try:
@@ -39,6 +41,8 @@ class LogAPIView(APIView):
 
 
 class BeaconAPIView(APIView):
+    permission_classes = [AllowAny]
+
     @staticmethod
     def get_beacon(uuid):
         try:
@@ -87,6 +91,8 @@ class BeaconAPIView(APIView):
 
 
 class BeaconAPIView2(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, inner_exhibition_pk):
         try:
             inner_exhibition = InnerExhibition.objects.get(pk=inner_exhibition_pk)
