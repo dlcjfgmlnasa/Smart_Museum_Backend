@@ -29,13 +29,12 @@ class ExhibitionDayAPIView(APIView):
 
         now = datetime.now()
         if now.year == date.year and now.month == date.month and now.day == date.day:
-            query_object = Q()
             inner_exhibitions = exhibition.inner_exhibition.all()
-            for inner_exhibition in inner_exhibitions:
-                query_object.add(Q(beacon__inner_exhibition=inner_exhibition), Q.OR)
-
-            queryset = Log.objects.filter(query_object)
-            queryset = queryset.filter(int_dt__year=date.year, int_dt__month=date.month, int_dt__day=date.day)
+            queryset = Log.objects.filter(
+                beacon__inner_exhibition__in=inner_exhibitions,
+                int_dt__year=date.year, int_dt__month=date.month, int_dt__day=date.day
+            )
+            queryset = queryset.filter()
             total_sex = {sex_index[0]: 0 for sex_index in Log.SEX_CHOICE}
             total_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
 
