@@ -122,3 +122,17 @@ class BeaconAPIView2(APIView):
             serializer_cls.data,
             status=status.HTTP_200_OK
         )
+
+    def delete(self, request, inner_exhibition_pk):
+        try:
+            inner_exhibition = InnerExhibition.objects.get(pk=inner_exhibition_pk)
+        except InnerExhibition.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+        beacons = inner_exhibition.beacon.all()
+        beacons.delete()
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
