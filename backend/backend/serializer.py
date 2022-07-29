@@ -17,6 +17,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['name'] = user.username
         token['is_staff'] = user.is_staff
 
+        # 주의 : 익명의 아이디로 접속하면 수산과학관으로 자동으로 변경 !
+        if user.username == 'anonymous':
+            token['user_id'] = 5
+
         return token
 
 
