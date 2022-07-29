@@ -186,7 +186,7 @@ class ExhibitionFootPrintAPIView(APIView):
         if now.year == date.year and now.month == date.month and now.day == date.day:
             total_footprint = {
                 idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                for idx in range(exhibition.inner_exhibition.count())}
+                for idx in range(50)}
             logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
 
             mac_address_list = list(set([log.mac_address for log in logs]))
