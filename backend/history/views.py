@@ -134,6 +134,7 @@ class ExhibitionTimeAPIView(APIView):
 
         try:
             date = request.GET['date']
+
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -177,6 +178,10 @@ class ExhibitionFootPrintAPIView(APIView):
 
         try:
             date = request.GET['date']
+            year, month, day = date.split('-')
+            month = '{0:02d}'.format(month)
+            day = '{0:02d}'.format(day)
+            date = year + '-' + month + '-' + day
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -242,6 +247,10 @@ class InnerExhibitionDayAPIView(APIView):
 
         try:
             date = request.GET['date']
+            year, month, day = date.split('-')
+            month = '{0:02d}'.format(month)
+            day = '{0:02d}'.format(day)
+            date = year + '-' + month + '-' + day
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
