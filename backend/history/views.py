@@ -20,6 +20,10 @@ class ExhibitionDayAPIView(APIView):
 
         try:
             date = request.GET['date']
+            year, month, day = date.split('-')
+            month = '{0:02d}'.format(int(month))
+            day = '{0:02d}'.format(int(day))
+            date = year + '-' + month + '-' + day
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -134,17 +138,10 @@ class ExhibitionTimeAPIView(APIView):
 
         try:
             date = request.GET['date']
-            print(date)
             year, month, day = date.split('-')
-            print(int(year))
-            print(int(month))
-            print(int(day))
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
-            print(month)
-            print(day)
             date = year + '-' + month + '-' + day
-            print(date)
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
@@ -188,11 +185,7 @@ class ExhibitionFootPrintAPIView(APIView):
 
         try:
             date = request.GET['date']
-            print(date)
             year, month, day = date.split('-')
-            print(year)
-            print(month)
-            print(day)
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
             date = year + '-' + month + '-' + day
@@ -261,11 +254,7 @@ class InnerExhibitionDayAPIView(APIView):
 
         try:
             date = request.GET['date']
-            print(date)
             year, month, day = date.split('-')
-            print(year)
-            print(month)
-            print(day)
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
             date = year + '-' + month + '-' + day
@@ -328,6 +317,10 @@ class InnerExhibitionTimeAPIView(APIView):
 
         try:
             date = request.GET['date']
+            year, month, day = date.split('-')
+            month = '{0:02d}'.format(int(month))
+            day = '{0:02d}'.format(int(day))
+            date = year + '-' + month + '-' + day
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
