@@ -136,9 +136,9 @@ class ExhibitionTimeAPIView(APIView):
             date = request.GET['date']
             print(date)
             year, month, day = date.split('-')
-            print(year)
-            print(month)
-            print(day)
+            print(int(year))
+            print(int(month))
+            print(int(day))
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
             date = year + '-' + month + '-' + day
