@@ -141,7 +141,10 @@ class ExhibitionTimeAPIView(APIView):
             print(int(day))
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
+            print(month)
+            print(day)
             date = year + '-' + month + '-' + day
+            print(date)
             date = datetime.fromisoformat(date)
         except KeyError:
             return Response(
