@@ -178,7 +178,11 @@ class ExhibitionFootPrintAPIView(APIView):
 
         try:
             date = request.GET['date']
+            print(date)
             year, month, day = date.split('-')
+            print(year)
+            print(month)
+            print(day)
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
             date = year + '-' + month + '-' + day
@@ -247,7 +251,11 @@ class InnerExhibitionDayAPIView(APIView):
 
         try:
             date = request.GET['date']
+            print(date)
             year, month, day = date.split('-')
+            print(year)
+            print(month)
+            print(day)
             month = '{0:02d}'.format(int(month))
             day = '{0:02d}'.format(int(day))
             date = year + '-' + month + '-' + day
