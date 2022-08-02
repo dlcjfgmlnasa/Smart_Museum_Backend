@@ -105,7 +105,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'smart_museum',
-        'USER': 'root',
+        'USER': 'sm',
         'PASSWORD': '2848',
         'HOST': '59.19.102.174',
         'PORT': '3306',
