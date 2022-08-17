@@ -14,6 +14,9 @@ import os
 import datetime
 from pathlib import Path
 import environ
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -104,11 +107,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'smart_museum',
-        'USER': 'dev',
-        'PASSWORD': '2848',
-        'HOST': '103.55.191.26',
-        'PORT': '8100',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
         "OPTIONS": {"charset": "utf8mb4"}
     }
 }
