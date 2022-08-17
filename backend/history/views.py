@@ -240,6 +240,7 @@ class ExhibitionFootPrintAPIView(APIView):
                 'rank': rank+1,
                 'inner_exhibitions': InnerExhibitionSimpleSerializer(inner_exhibition).data
             })
+        contents = contents[:10]    # top 10
         return Response(contents, status=status.HTTP_200_OK)
 
 
