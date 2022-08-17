@@ -240,7 +240,7 @@ class ExhibitionFootPrintAPIView(APIView):
                 'rank': rank+1,
                 'inner_exhibitions': InnerExhibitionSimpleSerializer(inner_exhibition).data
             })
-        return Response(contents, status=status.HTTP_204_NO_CONTENT)
+        return Response(contents, status=status.HTTP_200_OK)
 
 
 class InnerExhibitionDayAPIView(APIView):
