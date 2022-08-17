@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-gzjg=a0nehx$14^k*!kev2ot!&$&*8r-o87sjw%cfz04@l2ijp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -105,10 +105,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'smart_museum',
-        'USER': 'sm',
+        'USER': 'dev',
         'PASSWORD': '2848',
-        'HOST': '59.19.102.174',
-        'PORT': '3306',
+        'HOST': '103.55.191.26',
+        'PORT': '8100',
         "OPTIONS": {"charset": "utf8mb4"}
     }
 }
@@ -159,6 +159,7 @@ CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000',
                          'http://59.19.102.174',
                          'http://59.19.102.174:8888',
                          'https://donghyeokjo.github.io',
+                         'https://smartseas.kr',
                          'http://locslab.com',
                          'https://locslab.com']
 
