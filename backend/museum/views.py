@@ -229,6 +229,19 @@ class InnerExhibitionAPIView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    def delete(self, request, exhibition_pk):
+        exhibition = self.get_exhibition(pk=exhibition_pk)
+        if exhibition is None:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
+        inner_exhibitions = exhibition.inner_exhibition.all()
+        for inner_exhibition in inner_exhibitions:
+            inner_exhibition.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 
 class InnerExhibitionDetailAPIView(APIView):
     @staticmethod
