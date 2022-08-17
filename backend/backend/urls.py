@@ -13,13 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, include, re_path
+from django.contrib import admin
+from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 from django.conf.urls.static import static
 from django.conf import settings
 from .views import MyTokenObtainPairView
 from django.views.generic import TemplateView
-from backend.views import ReactAppView
 
 
 index = TemplateView.as_view(template_name='index.html')
@@ -55,6 +55,9 @@ urlpatterns = [
 ]
 
 urlpatterns += [
+    # Django Admin Page
+    path('django_admin/', admin.site.urls),
+
     # JWT Token API
     path('api/v1/token-auth/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
