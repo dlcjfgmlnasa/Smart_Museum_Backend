@@ -51,9 +51,19 @@ class BeaconAPIView(APIView):
         except Beacon.DoesNotExist:
             return None
 
+    @staticmethod
+    def random_get_beacon():
+        import random
+        beacons = Beacon.objects.all()
+        size = len(beacons)
+        i = random.choice(list(range(size)))
+        beacon = beacons[i]
+        return beacon
+
     def get(self, request):
         uuid = request.GET['uuid']
-        beacon = self.get_beacon(uuid=uuid)
+        # beacon = self.get_beacon(uuid=uuid)
+        beacon = self.random_get_beacon()   # TODO: !!!반드시 바꿔야된다.
 
         if beacon is None:
             return Response(
