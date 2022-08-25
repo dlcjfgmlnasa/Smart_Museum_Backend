@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from django.db import utils
+from history.models import Log
 from beacon.models import Beacon
 from museum.models import InnerExhibition, Exhibition
 from rest_framework import status
@@ -145,4 +146,17 @@ class BeaconAPIView2(APIView):
 
         return Response(
             status=status.HTTP_204_NO_CONTENT
+        )
+
+
+class BeaconFootPrint(APIView):
+    def get(self, request):
+        mac_address = request.GET['mac_address']
+
+        logs = Log.objects.filter(mac_address=mac_address)
+        serializer_cls = LogSerializer(logs, many=True)
+
+        return Response(
+            serializer_cls.data,
+            status=status.HTTP_200_OK
         )

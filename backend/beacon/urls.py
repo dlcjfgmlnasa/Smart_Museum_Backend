@@ -13,4 +13,7 @@ urlpatterns = [
     path('log/',
          views.LogAPIView.as_view(),
          name='log post'),
+    path('footprint/',
+         views.BeaconFootPrint.as_view(),
+         name='foot print')
 ]
