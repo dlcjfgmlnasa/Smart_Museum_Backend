@@ -157,8 +157,14 @@ class BeaconFootPrint(APIView):
 
         logs = Log.objects.filter(mac_address=mac_address)
         serializer_cls = LogSerializer(logs, many=True)
+        total = []
+        for data in serializer_cls.data:
+            inner_exhibition_pk = data['beacon']['inner_exhibition']
+            total.append(inner_exhibition_pk)
+        total = list(set(total))
+        result = {'result': total}
 
         return Response(
-            serializer_cls.data,
+            result,
             status=status.HTTP_200_OK
         )
