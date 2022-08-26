@@ -150,6 +150,8 @@ class BeaconAPIView2(APIView):
 
 
 class BeaconFootPrint(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         mac_address = request.GET['mac_address']
 
