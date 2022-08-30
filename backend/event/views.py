@@ -22,7 +22,7 @@ class EventAPIView(APIView):
         user = get_user_model().objects.get(
             id=request.auth.payload['user_id']
         )
-        event = user.event.all()
+        event = user.event.all().order_by('-type')
         serializer_cls = EventSimpleSerializer(event, many=True)
         return Response(
             serializer_cls.data,
