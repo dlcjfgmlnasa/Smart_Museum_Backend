@@ -64,13 +64,17 @@ def crontab_log_day_count_job():
 
     day_logs = []
     for inner_exhibition in inner_exhibitions:
-        logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition)
         total_sex = {sex_index[0]: 0 for sex_index in Log.SEX_CHOICE}
         total_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
 
-        for query in logs:
-            total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
-            total_age[int(query.sex)] = total_age[int(query.sex)] + 1
+        logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition)
+        mac_address_list = list(set([log.mac_address for log in logs]))
+        for mad_address in mac_address_list:
+            mac_address_log = logs.filter(mac_address=mad_address)
+            for query in mac_address_log:
+                total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
+                total_age[int(query.age_group)] = total_age[int(query.age_group)] + 1
+                break
 
         total_sex = {dict(Log.SEX_CHOICE)[k]: v for k, v in total_sex.items()}
         total_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in total_age.items()}
