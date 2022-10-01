@@ -228,10 +228,15 @@ class ExhibitionFootPrintAPIView(APIView):
                     result[key] = value[0]
             result_pk_list = [v for v in result.values() if v is not None]
         else:
-            foot_print = FootPrintLog.objects.get(
-                exhibition=exhibition,
-                date__year=date.year, date__month=date.month, date__day=date.day
-            )
+            try:
+                foot_print = FootPrintLog.objects.get(
+                    exhibition=exhibition,
+                    date__year=date.year, date__month=date.month, date__day=date.day
+                )
+            except FootPrintLog.DoesNotExist:
+                return Response(
+                    status=status.HTTP_404_NOT_FOUND
+                )
             result_pk_list = foot_print.foot_printing_count
         contents = []
         for rank, inner_exhibition_pk in enumerate(result_pk_list):
