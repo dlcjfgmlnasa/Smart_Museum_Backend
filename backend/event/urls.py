@@ -21,5 +21,8 @@ urlpatterns = [
          name='event inner_exhibition create/read list'),
     path('mission/',
          views.EventMissionListView.as_view(),
-         name='event mission')
+         name='event mission'),
+    path('mission/event/<int:event_pk>/',
+         views.EventMissionDetailView.as_view(),
+         name='event detail mission')
 ]
