@@ -207,7 +207,8 @@ class ExhibitionFootPrintAPIView(APIView):
             # TODO: mac address 기준으로 변경 필요!!
             total_footprint = {
                 idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                for idx in range(50)}
+                for idx in range(100)}
+
             logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
 
             mac_address_list = list(set([log.mac_address for log in logs]))

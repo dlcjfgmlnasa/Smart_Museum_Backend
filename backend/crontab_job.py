@@ -21,7 +21,7 @@ def crontab_footprint_job():
     foot_print_list = []
     for exhibition in exhibitions:
         total_footprint = {idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                           for idx in range(50)}
+                           for idx in range(200)}
         logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
 
         mac_address_list = list(set([log.mac_address for log in logs]))
@@ -70,11 +70,9 @@ def crontab_log_day_count_job():
         logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition)
         mac_address_list = list(set([log.mac_address for log in logs]))
         for mad_address in mac_address_list:
-            mac_address_log = logs.filter(mac_address=mad_address)
-            for query in mac_address_log:
-                total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
-                total_age[int(query.age_group)] = total_age[int(query.age_group)] + 1
-                break
+            query = logs.filter(mac_address=mad_address).first()
+            total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
+            total_age[int(query.age_group)] = total_age[int(query.age_group)] + 1
 
         total_sex = {dict(Log.SEX_CHOICE)[k]: v for k, v in total_sex.items()}
         total_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in total_age.items()}
