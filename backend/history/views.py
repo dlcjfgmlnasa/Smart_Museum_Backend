@@ -32,24 +32,26 @@ class ExhibitionDayAPIView(APIView):
 
         now = datetime.now()
         if now.year == date.year and now.month == date.month and now.day == date.day:
-            inner_exhibitions = exhibition.inner_exhibition.all()
-            queryset = Log.objects.filter(
-                beacon__inner_exhibition__in=inner_exhibitions,
-                int_dt__year=date.year, int_dt__month=date.month, int_dt__day=date.day
-            )
-            queryset = queryset.filter()
             total_sex = {sex_index[0]: 0 for sex_index in Log.SEX_CHOICE}
             total_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
 
-            for query in queryset:
-                total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
-                total_age[int(query.sex)] = total_age[int(query.sex)] + 1
+            inner_exhibitions = exhibition.inner_exhibition.all()
+            for inner_exhibition in inner_exhibitions:
+                logs = Log.objects.filter(
+                    beacon__inner_exhibition=inner_exhibition,
+                    int_dt__year=date.year, int_dt__month=date.month, int_dt__day=date.day
+                )
+                mac_address_list = list(set([log.mac_address for log in logs]))
+                for mad_address in mac_address_list:
+                    query = logs.filter(mac_address=mad_address).first()
+                    total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
+                    total_age[int(query.age_group)] = total_age[int(query.age_group)] + 1
 
             total_sex = {dict(Log.SEX_CHOICE)[k]: v for k, v in total_sex.items()}
             total_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in total_age.items()}
 
             result = {
-                'audience': queryset.count(),
+                'audience': sum(total_sex.values()),
                 'sex': total_sex,
                 'age': total_age
             }
@@ -154,7 +156,13 @@ class ExhibitionTimeAPIView(APIView):
         if now.year == date.year and now.month == date.month and now.day == date.day:
             for inner_exhibition in inner_exhibitions:
                 logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
-                current_time = {str(hour): logs.filter(int_dt__hour=hour).count() for hour in range(24)}
+                mac_address_list = list(set([log.mac_address for log in logs]))
+                current_time = {str(hour): 0 for hour in range(24)}
+                for mad_address in mac_address_list:
+                    query = logs.filter(mac_address=mad_address)
+                    hours = set([q.int_dt.hour for q in query])
+                    for hour in hours:
+                        current_time[str(hour)] = current_time[str(hour)] + 1
                 for k, v in current_time.items():
                     times[k].append(v)
         else:
@@ -196,6 +204,7 @@ class ExhibitionFootPrintAPIView(APIView):
             )
         now = datetime.now()
         if now.year == date.year and now.month == date.month and now.day == date.day:
+            # TODO: mac address 기준으로 변경 필요!!
             total_footprint = {
                 idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
                 for idx in range(50)}
@@ -271,19 +280,20 @@ class InnerExhibitionDayAPIView(APIView):
             )
         now = datetime.now()
         if now.year == date.year and now.month == date.month and now.day == date.day:
-            logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
             total_sex = {sex_index[0]: 0 for sex_index in Log.SEX_CHOICE}
             total_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
 
-            for log in logs:
-                total_sex[int(log.sex)] = total_sex[int(log.sex)] + 1
-                total_age[int(log.sex)] = total_age[int(log.sex)] + 1
+            logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
+            mac_address_list = list(set([log.mac_address for log in logs]))
+            for mad_address in mac_address_list:
+                query = logs.filter(mac_address=mad_address).first()
+                total_sex[int(query.sex)] = total_sex[int(query.sex)] + 1
+                total_age[int(query.age_group)] = total_age[int(query.age_group)] + 1
 
             total_sex = {dict(Log.SEX_CHOICE)[k]: v for k, v in total_sex.items()}
             total_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in total_age.items()}
-
             result = {
-                'audience': logs.count(),
+                'audience': sum(total_sex.values()),
                 'sex': total_sex,
                 'age': total_age
             }
@@ -335,8 +345,16 @@ class InnerExhibitionTimeAPIView(APIView):
         now = datetime.now()
         times = {str(hour): [] for hour in range(24)}
         if now.year == date.year and now.month == date.month and now.day == date.day:
+            current_time = {str(hour): 0 for hour in range(24)}
+
             logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
-            current_time = {str(hour): logs.filter(int_dt__hour=hour).count() for hour in range(24)}
+            mac_address_list = list(set([log.mac_address for log in logs]))
+            for mad_address in mac_address_list:
+                query = logs.filter(mac_address=mad_address)
+                hours = set([q.int_dt.hour for q in query])
+                for hour in hours:
+                    current_time[str(hour)] = current_time[str(hour)] + 1
+
             for k, v in current_time.items():
                 times[k].append(v)
         else:
