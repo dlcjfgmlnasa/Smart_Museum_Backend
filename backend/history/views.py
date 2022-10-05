@@ -204,11 +204,6 @@ class ExhibitionFootPrintAPIView(APIView):
             )
         now = datetime.now()
         if now.year == date.year and now.month == date.month and now.day == date.day:
-            # TODO: mac address 기준으로 변경 필요!!
-            total_footprint = {
-                idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                for idx in range(100)}
-
             logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
 
             mac_address_list = list(set([log.mac_address for log in logs]))
@@ -217,6 +212,10 @@ class ExhibitionFootPrintAPIView(APIView):
             for mad_address in mac_address_list:
                 mac_address_log = logs.filter(mac_address=mad_address).order_by('int_dt')
                 footprint__temp[mad_address] = [query.beacon.inner_exhibition.id for query in mac_address_log]
+
+            total_footprint = {
+                idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+                for idx in range(max([len(v) for v in footprint__temp.values()]))}
 
             for key, values in footprint__temp.items():
                 sample = [values[0]]
@@ -255,7 +254,7 @@ class ExhibitionFootPrintAPIView(APIView):
                 'rank': rank+1,
                 'inner_exhibitions': InnerExhibitionSimpleSerializer(inner_exhibition).data
             })
-        contents = contents[:10]    # top 10
+        # contents = contents[:10]    # top 10
         return Response(contents, status=status.HTTP_200_OK)
 
 
