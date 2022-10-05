@@ -100,22 +100,21 @@ class ExhibitionPopularityAPIView(APIView):
 
         total = []
         inner_exhibitions = exhibition.inner_exhibition.all()
+
         for inner_exhibition in inner_exhibitions:
             # 누적 박물관 관람객 정보 + 현재 박물관 관람객 정보
             day_logs = DayLog.objects.filter(inner_exhibition_id=inner_exhibition.id)
-            logs = Log.objects.filter(beacon__inner_exhibition=inner_exhibition.id)
-            current_age = {age_index[0]: 0 for age_index in Log.AGE_GROUP_CHOICE}
-            for query in logs:
-                current_age[int(query.sex)] = current_age[int(query.sex)] + 1
-
-            current_age = {dict(Log.AGE_GROUP_CHOICE)[k]: v for k, v in current_age.items()}
-
+            count = sum([day_log.count for day_log in day_logs])
+            age_group_dict = {'10': 0, '20': 0, '30': 0, '40': 0, '50': 0, '50 >= ': 0}
             for day_log in day_logs:
-                for k, value in day_log.age_group_count.items():
-                    current_value = current_age[k]
-                    total.append({'name': inner_exhibition.name,
-                                  'age_group': k,
-                                  'count': value + current_value})
+                for key, value in day_log.age_group_count.items():
+                    age_group_dict[key] = age_group_dict[key] + value
+            age_group = max(age_group_dict, key=age_group_dict.get)
+            total.append({
+                'name': inner_exhibition.name,
+                'count': count,
+                'age_group': age_group
+            })
 
         total = sorted(total, key=lambda x: x['count'], reverse=True)
         n_total = []
