@@ -263,6 +263,10 @@ class EventMissionDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        serializer_cls = EventMissionSerializer(event, data=request.data)
+        if serializer_cls.is_valid():
+            serializer_cls.save()
+
         event.inner_exhibition.clear()
         event.save()
 
@@ -274,5 +278,7 @@ class EventMissionDetailView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
             inner_exhibition.event.add(event)
+
+
         event.save()
         return Response(status=status.HTTP_200_OK)
