@@ -20,8 +20,6 @@ def crontab_footprint_job():
 
     foot_print_list = []
     for exhibition in exhibitions:
-        total_footprint = {idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                           for idx in range(200)}
         logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
 
         mac_address_list = list(set([log.mac_address for log in logs]))
@@ -30,6 +28,10 @@ def crontab_footprint_job():
         for mad_address in mac_address_list:
             mac_address_log = logs.filter(mac_address=mad_address).order_by('int_dt')
             footprint__temp[mad_address] = [query.beacon.inner_exhibition.id for query in mac_address_log]
+
+        total_footprint = {
+            idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+            for idx in range(max([len(v) for v in footprint__temp.values()]))}
 
         for key, values in footprint__temp.items():
             sample = [values[0]]
