@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
+import numpy as np
+import pandas as pd
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 
 import django
@@ -14,6 +16,15 @@ from datetime import timedelta
 
 
 def crontab_footprint_job():
+    def total_seconds(timedelta_):
+        try:
+            seconds = timedelta_.total_seconds()
+        except AttributeError:  # no method total_seconds
+            one_second = np.timedelta64(1000000000, 'ns')
+            # use nanoseconds to get highest possible precision in output
+            seconds = timedelta_ / one_second
+        return seconds
+
     exhibitions = Exhibition.objects.filter(user__is_superuser=False)
     date = timezone.now() - timedelta(days=1)
     date = date.strftime('%Y-%m-%d')
@@ -27,7 +38,18 @@ def crontab_footprint_job():
 
         for mad_address in mac_address_list:
             mac_address_log = logs.filter(mac_address=mad_address).order_by('int_dt')
-            footprint__temp[mad_address] = [query.beacon.inner_exhibition.id for query in mac_address_log]
+            df = pd.DataFrame(mac_address_log.values())
+
+            times = pd.to_datetime(df['int_dt'].values[1:]) - pd.to_datetime(df['int_dt'].values[:-1])
+            times = np.array([total_seconds(time) for time in times])
+            times = list(times > 5)
+            times.append(True)
+
+            temp = []
+            for query, time in zip(mac_address_log, times):
+                if time:
+                    temp.append(query.beacon.inner_exhibition.id)
+            footprint__temp[mad_address] = temp
 
         total_footprint = {
             idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}

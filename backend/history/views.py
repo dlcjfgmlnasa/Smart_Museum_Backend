@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import numpy as np
+import pandas as pd
 from datetime import datetime
 from museum.serializer import InnerExhibitionSimpleSerializer
 from museum.models import Exhibition, InnerExhibition
@@ -182,6 +184,16 @@ class ExhibitionTimeAPIView(APIView):
 
 
 class ExhibitionFootPrintAPIView(APIView):
+    @staticmethod
+    def total_seconds(timedelta):
+        try:
+            seconds = timedelta.total_seconds()
+        except AttributeError:  # no method total_seconds
+            one_second = np.timedelta64(1000000000, 'ns')
+            # use nanoseconds to get highest possible precision in output
+            seconds = timedelta / one_second
+        return seconds
+
     def get(self, request, exhibition_pk):
         try:
             exhibition = Exhibition.objects.get(pk=exhibition_pk)
@@ -210,7 +222,18 @@ class ExhibitionFootPrintAPIView(APIView):
 
             for mad_address in mac_address_list:
                 mac_address_log = logs.filter(mac_address=mad_address).order_by('int_dt')
-                footprint__temp[mad_address] = [query.beacon.inner_exhibition.id for query in mac_address_log]
+                df = pd.DataFrame(mac_address_log.values())
+
+                times = pd.to_datetime(df['int_dt'].values[1:]) - pd.to_datetime(df['int_dt'].values[:-1])
+                times = np.array([self.total_seconds(time) for time in times])
+                times = list(times > 5)
+                times.append(True)
+
+                temp = []
+                for query, time in zip(mac_address_log, times):
+                    if time:
+                        temp.append(query.beacon.inner_exhibition.id)
+                footprint__temp[mad_address] = temp
 
             total_footprint = {
                 idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
