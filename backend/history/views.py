@@ -226,7 +226,7 @@ class ExhibitionFootPrintAPIView(APIView):
 
                 times = pd.to_datetime(df['int_dt'].values[1:]) - pd.to_datetime(df['int_dt'].values[:-1])
                 times = np.array([self.total_seconds(time) for time in times])
-                times = list(times > 5)
+                times = list(times > 30)    # 30초 이상 머물렀을때
                 times.append(True)
 
                 temp = []
