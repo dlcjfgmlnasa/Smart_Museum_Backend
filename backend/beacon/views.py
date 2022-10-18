@@ -63,8 +63,8 @@ class BeaconAPIView(APIView):
 
     def get(self, request):
         uuid = request.GET['uuid']
-        # beacon = self.get_beacon(uuid=uuid)
-        beacon = self.random_get_beacon()   # TODO: !!!반드시 바꿔야된다.
+        beacon = self.get_beacon(uuid=uuid)
+        # beacon = self.random_get_beacon()   # TODO: !!!반드시 바꿔야된다.
 
         if beacon is None:
             return Response(
