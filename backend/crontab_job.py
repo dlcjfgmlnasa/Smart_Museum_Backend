@@ -135,7 +135,9 @@ def save_csv():
             seconds = _timedelta / one_second
         return seconds
 
-    now = datetime.now().strftime('%Y-%m-%d')
+    now = timezone.now() - timedelta(days=1)
+    now = now.strftime('%Y-%m-%d')
+
     exhibitions = Exhibition.objects.filter(user__is_superuser=False)
     log_df = {'unique_id': [], 'date': [], 'start_time': [], 'end_time': [], 'path': []}
     for exhibition in exhibitions:
