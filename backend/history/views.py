@@ -235,9 +235,14 @@ class ExhibitionFootPrintAPIView(APIView):
                         temp.append(query.beacon.inner_exhibition.id)
                 footprint__temp[mad_address] = temp
 
-            total_footprint = {
-                idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                for idx in range(max([len(v) for v in footprint__temp.values()]))}
+            try:
+                total_footprint = {
+                    idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+                    for idx in range(max([len(v) for v in footprint__temp.values()]))}
+            except ValueError:
+                total_footprint = {
+                    idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+                    for idx in range(100)}
 
             for key, values in footprint__temp.items():
                 sample = [values[0]]
