@@ -184,7 +184,6 @@ def save_csv():
     )
 
     total_df = {'int_dt': [], 'upt_dt': [], 'beacon_id': [], 'sex': [], 'age_group': [], 'mac_address': []}
-
     exhibitions = Exhibition.objects.filter(user__is_superuser=False)
     for exhibition in exhibitions:
         logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
