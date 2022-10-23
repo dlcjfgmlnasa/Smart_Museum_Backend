@@ -6,6 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 
 import django
 import operator
+from datetime import datetime
 django.setup()
 
 
@@ -119,7 +120,73 @@ def crontab_log_day_count_job():
 
 
 def save_csv():
-    pass
+    def total_seconds(_timedelta):
+        try:
+            seconds = _timedelta.total_seconds()
+        except AttributeError:  # no method total_seconds
+            one_second = np.timedelta64(1000000000, 'ns')
+            # use nanoseconds to get highest possible precision in output
+            seconds = _timedelta / one_second
+        return seconds
+
+    now = datetime.now().strftime('%Y-%m-%d')
+    exhibitions = Exhibition.objects.filter(user__is_superuser=False)
+    log_df = {'unique_id': [], 'date': [], 'start_time': [], 'end_time': [], 'path': []}
+    for exhibition in exhibitions:
+        logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
+
+        mac_address_list = list(set([log.mac_address for log in logs]))
+
+        for mac_address in mac_address_list:
+            mac_address_log = logs.filter(mac_address=mac_address).order_by('int_dt')
+            start_dt, end_dt = mac_address_log.first().int_dt, mac_address_log.last().int_dt
+            df = pd.DataFrame(mac_address_log.values())
+
+            times = pd.to_datetime(df['int_dt'].values[1:]) - pd.to_datetime(df['int_dt'].values[:-1])
+            times = np.array([total_seconds(time) for time in times])
+            times = list(times > 30)  # 30초 이상 머물렀을때
+            times.append(True)
+
+            temp = []
+            for query, time in zip(mac_address_log, times):
+                if time:
+                    temp.append(str(query.beacon.inner_exhibition.id))
+
+            temp2 = []
+            for i, pk in enumerate(temp):
+                if i == 0:
+                    temp2.append(str(pk))
+                else:
+                    if temp2[len(temp2) - 1] != pk:
+                        temp2.append(str(pk))
+            path = '-'.join(temp2)
+            date = start_dt.strftime('%Y-%m-%d')
+            start_time, end_time = start_dt.strftime('%H:%M:%S'), end_dt.strftime('%H:%M:%S')
+
+            log_df['unique_id'].append(mac_address)
+            log_df['date'].append(date)
+            log_df['start_time'].append(start_time)
+            log_df['end_time'].append(end_time)
+            log_df['path'].append(path)
+
+    foot_print_df = pd.DataFrame(log_df)
+    foot_print_df.to_csv(
+        os.path.join('.', 'log_files', 'foot_print', '{}_Foot_Print_Log.csv'.format(now)),
+        index=False
+    )
+
+    total_df = []
+    exhibitions = Exhibition.objects.filter(user__is_superuser=False)
+    for exhibition in exhibitions:
+        logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
+        df = pd.DataFrame(logs.values())[['int_dt', 'upt_dt', 'beacon_id', 'sex', 'age_group', 'mac_address']]
+        total_df.append(df)
+    total_df = pd.concat(total_df)
+    total_df.to_csv(
+        os.path.join('.', 'log_files', 'log', '{}_Raw.csv'.format(now)),
+        index=False
+    )
+
 
 def delete_log():
     logs = Log.objects.all()
@@ -129,7 +196,8 @@ def delete_log():
 def main_crontab():
     crontab_footprint_job()         # Job - 1 : 사용자 발자국 추적 저장
     crontab_log_day_count_job()     # Job - 2 : 사용자 정보 저장
-    delete_log()                    # Job - 3 : 로그 삭제
+    save_csv()                      # Job - 3 : 로그 저장
+    delete_log()                    # Job - 4 : 로그 삭제
 
 
 if __name__ == '__main__':
