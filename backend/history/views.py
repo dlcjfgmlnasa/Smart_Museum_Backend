@@ -242,7 +242,7 @@ class ExhibitionFootPrintAPIView(APIView):
             except ValueError:
                 total_footprint = {
                     idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                    for idx in range(100)}
+                    for idx in range(10)}
 
             for key, values in footprint__temp.items():
                 sample = [values[0]]
