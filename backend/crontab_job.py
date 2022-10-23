@@ -52,9 +52,15 @@ def crontab_footprint_job():
                     temp.append(query.beacon.inner_exhibition.id)
             footprint__temp[mad_address] = temp
 
-        total_footprint = {
-            idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-            for idx in range(max([len(v) for v in footprint__temp.values()]))}
+        try:
+            total_footprint = {
+                idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+                for idx in range(max([len(v) for v in footprint__temp.values()]))}
+        except ValueError:
+            total_footprint = {
+                idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
+                for idx in range(100)
+            }
 
         for key, values in footprint__temp.items():
             sample = [values[0]]
@@ -175,13 +181,24 @@ def save_csv():
         index=False
     )
 
-    total_df = []
+    total_df = {'int_dt': [], 'upt_dt': [], 'beacon_id': [], 'sex': [], 'age_group': [], 'mac_address': []}
+
     exhibitions = Exhibition.objects.filter(user__is_superuser=False)
     for exhibition in exhibitions:
         logs = Log.objects.filter(beacon__inner_exhibition__exhibition=exhibition)
-        df = pd.DataFrame(logs.values())[['int_dt', 'upt_dt', 'beacon_id', 'sex', 'age_group', 'mac_address']]
-        total_df.append(df)
-    total_df = pd.concat(total_df)
+        try:
+            df = pd.DataFrame(logs.values())[['int_dt', 'upt_dt', 'beacon_id', 'sex', 'age_group', 'mac_address']]
+        except KeyError:
+            continue
+
+        total_df['int_dt'].append(df['int_dt'])
+        total_df['upt_dt'].append(df['upt_dt'])
+        total_df['beacon_id'].append(df['beacon_id'])
+        total_df['sex'].append(df['sex'])
+        total_df['age_group'].append(df['age_group'])
+        total_df['mac_address'].append(df['mac_address'])
+
+    total_df = pd.DataFrame(total_df)
     total_df.to_csv(
         os.path.join('.', 'log_files', 'log', '{}_Raw.csv'.format(now)),
         index=False
