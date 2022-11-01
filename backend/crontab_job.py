@@ -59,7 +59,7 @@ def crontab_footprint_job():
         except ValueError:
             total_footprint = {
                 idx: {inner_exhibition.id: 0 for inner_exhibition in exhibition.inner_exhibition.all()}
-                for idx in range(100)
+                for idx in range(200)
             }
 
         for key, values in footprint__temp.items():
@@ -74,7 +74,10 @@ def crontab_footprint_job():
 
         result = {}
         for key, stats in total_footprint.items():
-            value = max(stats.items(), key=operator.itemgetter(1))
+            try:
+                value = max(stats.items(), key=operator.itemgetter(1))
+            except ValueError:
+                continue
             if value[1] == 0:
                 result[key] = None
             else:
@@ -192,12 +195,12 @@ def save_csv():
         except KeyError:
             continue
 
-        total_df['int_dt'].append(df['int_dt'])
-        total_df['upt_dt'].append(df['upt_dt'])
-        total_df['beacon_id'].append(df['beacon_id'])
-        total_df['sex'].append(df['sex'])
-        total_df['age_group'].append(df['age_group'])
-        total_df['mac_address'].append(df['mac_address'])
+        total_df['int_dt'].extend(df['int_dt'].values)
+        total_df['upt_dt'].extend(df['upt_dt'].values)
+        total_df['beacon_id'].extend(df['beacon_id'].values)
+        total_df['sex'].extend(df['sex'].values)
+        total_df['age_group'].extend(df['age_group'].values)
+        total_df['mac_address'].extend(df['mac_address'].values)
 
     total_df = pd.DataFrame(total_df)
     total_df.to_csv(
