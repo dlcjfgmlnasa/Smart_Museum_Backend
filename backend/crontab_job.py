@@ -182,9 +182,8 @@ def save_csv():
 
     foot_print_df = pd.DataFrame(log_df)
     foot_print_df.to_csv(
-        os.path.join('.', 'log_files', 'foot_print', '{}_Foot_Print_Log.csv'.format(now)),
-        index=False
-    )
+        '/home/locs_manage/Workspace/Smart_Museum_Backend/backend/log_files/foot_print/{}_Foot_Print_Log.csv'.format(
+            now), index=False)
 
     total_df = {'int_dt': [], 'upt_dt': [], 'beacon_id': [], 'sex': [], 'age_group': [], 'mac_address': []}
     exhibitions = Exhibition.objects.filter(user__is_superuser=False)
@@ -203,10 +202,8 @@ def save_csv():
         total_df['mac_address'].extend(df['mac_address'].values)
 
     total_df = pd.DataFrame(total_df)
-    total_df.to_csv(
-        os.path.join('.', 'log_files', 'log', '{}_Raw.csv'.format(now)),
-        index=False
-    )
+    total_df.to_csv('/home/locs_manage/Workspace/Smart_Museum_Backend/backend/log_files/log/{}_Raw_Log.csv'.format(now),
+                    index=False)
 
 
 def delete_log():
