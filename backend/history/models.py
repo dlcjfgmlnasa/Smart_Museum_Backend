@@ -38,7 +38,7 @@ class Log(TimeStampedModel):
     )
     mac_address = models.CharField(
         null=False, blank=False,
-        max_length=25,
+        max_length=100,
         db_column='MAC_ADDRESS'
     )
 
